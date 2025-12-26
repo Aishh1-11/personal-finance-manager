@@ -1,0 +1,16 @@
+# virtual environment
+.venv/
+
+# django stuff
+db.sqlite3
+__pycache__/
+
+# environment secrets
+.env
+
+# IDE files
+.idea/
+.vscode/
+
+# compiled python
+*.pyc
