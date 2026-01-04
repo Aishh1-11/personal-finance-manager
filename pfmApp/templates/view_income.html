@@ -1,0 +1,54 @@
+{% extends "dashboard.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>view income</title>
+</head>
+<body>
+<div class="card">
+                <h5 class="card-header">Income</h5>
+                <div class="table-responsive text-nowrap">
+                  <table class="table table-dark">
+                    <thead>
+                      <tr>
+                        <th>Amount</th>
+                        <th>Income Source</th>
+                        <th>Date</th>
+                        <th>Note</th>
+                        <th>Actions</th>
+
+                      </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                    {% for i in income %}
+                      <tr>
+                          <td>{{i.Amount}}</td>
+                          <td>{{i.Income_source}}</td>
+                          <td>{{i.Date}}</td>
+                          <td>{{i.Note}}</td>
+                          <td >
+                              <div class="d-flex " style=" gap: 3px;">
+
+                                  <a href="{% url 'edit_income' i.id %}" class="btn btn-primary">Edit</a>
+                                  <form method="post" action="{% url 'delete_income' i.id %}">
+                                     {% csrf_token %}
+                                  <button type="submit" class=" ms-3 btn btn-outline-danger " onclick="return confirm('Are you sure you want to delete this Income?')" >Delete</button>
+                                  </form>
+
+                              </div>
+                          </td>
+
+
+                      </tr>
+                    {% endfor %}
+
+                    </tbody>
+                  </table>
+
+                </div>
+              </div>
+</body>
+</html>
+{% endblock %}

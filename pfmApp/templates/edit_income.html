@@ -1,0 +1,53 @@
+{% extends 'dashboard.html' %}
+{% block content %}
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>edit income</title>
+</head>
+<body>
+
+<div class="col-xl">
+                  <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">edit Income</h5>
+
+                    </div>
+                    <div class="card-body">
+                      <form method="POST" action="{% url 'update_income' income.id %}">
+                          {% csrf_token %}
+
+                        <div class="mb-3">
+                          <label class="form-label" for="amount">Amount</label>
+                          <input type="number" class="form-control" id="amount" value="{{income.Amount}}" name="amount">
+                        </div>
+
+
+                        <div class="mb-3">
+                          <label class="form-label" for="date">Date</label>
+                   <input type="date" id="date" class="form-control" name="date" value="{{ income.Date|date:'Y-m-d' }}">
+
+                        </div>
+
+                          <div class="mb-3">
+                          <label class="form-label" for="source">Source</label>
+                          <input type="text" id="source" class="form-control phone-mask" value="{{income.Income_source}}" name="source">
+                        </div>
+
+                              <div class="mb-3">
+                          <label class="form-label" for="source">Note</label>
+                          <textarea rows="3" name="note"  class="form-control phone-mask" >{{income.Note}}</textarea>
+                        </div>
+
+
+                        <button type="submit" class="btn btn-primary">update</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+</body>
+</html>
+{% endblock %}
