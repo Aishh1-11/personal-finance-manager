@@ -28,6 +28,13 @@ urlpatterns=[
 
 
     path("add_commitment/",views.add_commitment,name="add_commitment"),
+    path("save_commitment/",views.save_commitment,name="save_commitment"),
+    path("view_commitment/",views.view_commitment,name="view_commitment"),
+    path("edit_commitment/<int:commitment_id>",views.edit_commitment,name="edit_commitment"),
+    path("update_commitment/<int:commitment_id>",views.update_commitment,name="update_commitment"),
+    path("delete_commitment/<int:commitment_id>",views.delete_commitment,name="delete_commitment"),
+
+    path("mark_commitment_paid/<int:commitment_id>",views.mark_commitment_paid,name="mark_commitment_paid"),
 
 
 ]

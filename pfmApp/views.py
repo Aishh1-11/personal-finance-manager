@@ -8,6 +8,7 @@ from datetime import date
 from django.db.models import Sum
 from django.utils.timezone import now
 
+
 # Create your views here.
 def dashboard(request):
     user = request.user
@@ -200,3 +201,64 @@ def delete_expense(request,expense_id):
 
 def add_commitment(request):
     return render(request,"add_commitment.html")
+
+def save_commitment(request):
+
+    if request.method == "POST":
+
+        title = request.POST.get("title")
+        amt = request.POST.get("amount")
+        due = request.POST.get("due_day")
+        is_r = request.POST.get("is_recurring")
+        note = request.POST.get("note")
+
+        CommitmentDb.objects.create(user=request.user,title=title,amount=amt,due_day=due,is_recurring=is_r,note=note)
+
+    return redirect("add_commitment")
+
+
+def view_commitment(request):
+    commitments = CommitmentDb.objects.all()
+    return render(request,"view_commitments.html",{"commitments":commitments})
+
+def edit_commitment(request,commitment_id):
+    commitment = CommitmentDb.objects.get(id=commitment_id)
+    return render(request,"edit_commitment.html",{"commitment":commitment})
+
+def update_commitment(request,commitment_id):
+    if request.method == "POST":
+
+        title = request.POST.get("title")
+        amt = request.POST.get("amount")
+        due = request.POST.get("due_day")
+        is_r = request.POST.get("is_recurring")
+        note = request.POST.get("note")
+
+        CommitmentDb.objects.filter(id=commitment_id).update(user=request.user,title=title,amount=amt,due_day=due,is_recurring=is_r,note=note)
+
+    return redirect("view_commitment")
+
+def delete_commitment(request,commitment_id):
+
+    commitment = get_object_or_404(CommitmentDb,user=request.user,id=commitment_id)
+    if request.method == "POST":
+        commitment.delete()
+        return redirect("view_commitment")
+
+    return redirect("view_commitment")
+
+def mark_commitment_paid(request,commitment_id):
+    commitment = get_object_or_404(CommitmentDb,id=commitment_id,user=request.user)
+    success = commitment.mark_as_paid()
+
+    if success :
+        messages.success(request,"commitment masked as paid and expense created")
+    else:
+        messages.warning(request,"commitment already paid this month")
+
+
+
+    return redirect("view_commitment")
+
+
+
