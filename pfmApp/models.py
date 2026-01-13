@@ -34,7 +34,7 @@ class CommitmentDb(models.Model):
     title = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=10,decimal_places=2)
     due_day=models.IntegerField()
-    is_recurring = models.BooleanField(default=True)
+    is_recurring = models.BooleanField(default=True,null=True,blank=True)
     note = models.TextField(blank=True, null=True)
 
     last_paid_date = models.DateField(null=True,blank=True)

@@ -64,7 +64,7 @@
 
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
           <div class="app-brand demo">
-            <a href="index.html" class="app-brand-link">
+            <a href="#" class="app-brand-link">
               <span class="app-brand-logo demo">
                 <svg
                   width="25"
@@ -368,14 +368,37 @@
 
                           <div class="mb-3">
                           <label class="form-label"  >category</label>
-                          <select class="form-control phone-mask" name="category">
-                              <option selected  value="{{expense.Category}}" > {{expense.Category}}</option>
-                              <option value="Commitment">Commitment</option>
-                              <option value="Consumption">Consumption</option>
-                              <option value="Safety">Safety</option>
-                              <option value="Growth & Freedom">Growth & Freedom</option>
+                          <select class="form-control phone-mask" name="category"
+                                  {% if expense.Category == "Commitment" %}disabled {% endif %}
+                              >
+
+
+
+                              <option value="Consumption" {% if expense.Category == "Consumption" %} selected {% endif %} >
+                              Consumption
+                              </option>
+
+                              <option value="Safety"
+                                      {% if expense.category == "Safety" %} selected {% endif %} > Safety
+                              </option>
+
+                              <option value="Growth"
+                                      {% if expense.Category == "Growth" %} selected {% endif %} > Growth
+                              </option>
+
+                              <option value="Freedom"
+                                      {% if expense.Category == "Freedom" %} selected {% endif %} > Freedom
+                              </option>
+
+                              <option {% if expense.Category == "Commitment" %} selected {% endif %} value="Commitment">Commitment</option>
                           </select>
                         </div>
+
+                          {% if expense.Category == "Commitment" %}
+                           <input type="hidden" name="category" value="Commitment">
+                          {% else %}
+                           <input type="hidden" name="category" value="{{ expense.Category }}">
+                          {% endif %}
 
                               <div class="mb-3">
                           <label class="form-label" for="source">Note</label>

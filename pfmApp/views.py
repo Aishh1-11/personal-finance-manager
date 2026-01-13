@@ -7,6 +7,7 @@ from django.contrib import messages
 from datetime import date
 from django.db.models import Sum
 from django.utils.timezone import now
+from decimal import Decimal
 
 
 # Create your views here.
@@ -17,14 +18,55 @@ def dashboard(request):
     current_year = today.year
     current_month_name = today.strftime("%B")
 
-    total_income = IncomeDb.objects.filter(
+
+    # income total
+    result  = IncomeDb.objects.filter(
         User=user,
         Date__month=current_month,
         Date__year=current_year,
-    ).aggregate(Sum('Amount'))['Amount__sum'] or 0
+    ).aggregate(total = Sum('Amount'))
+
+    total_income = result['total'] if result['total'] is not None else Decimal('0')
 
 
-    return render(request,"dashboard.html",{"user":user,"total_income": total_income,"current_month_name":current_month_name})
+    # expense total
+
+    result = ExpenseDb.objects.filter(User=user,Date__month=current_month,Date__year=current_year).aggregate(total=Sum("Amount"))
+    total_expense = result['total'] if result['total'] is not None else Decimal("0")
+
+    balance = total_income-total_expense  # can be neg #show warning
+
+    # commitments_total
+
+    result = CommitmentDb.objects.filter(user=user).aggregate(total=Sum('amount'))
+    total_commitment = result['total'] if result['total'] is not None else Decimal('0')
+
+    remaining_commitments = Decimal('0')
+
+    for c in CommitmentDb.objects.filter(active=True,user=user):
+        if not c.is_paid_this_month():
+            remaining_commitments +=c.amount
+
+
+    spendable_amount = balance-remaining_commitments # can be neg # show warning
+
+
+
+
+
+
+
+
+
+
+
+    return render(request,"dashboard.html",{"user":user,"total_income": total_income,
+                                            "current_month_name":current_month_name,
+                                            "remaining_commitments":remaining_commitments,
+                                            "spendable_amount":spendable_amount,"balance":balance})
+
+
+
 
 def user_registration_page(request):
     return render(request,"user_registration_page.html")
@@ -218,11 +260,11 @@ def save_commitment(request):
 
 
 def view_commitment(request):
-    commitments = CommitmentDb.objects.all()
+    commitments = CommitmentDb.objects.filter(user=request.user)
     return render(request,"view_commitments.html",{"commitments":commitments})
 
 def edit_commitment(request,commitment_id):
-    commitment = CommitmentDb.objects.get(id=commitment_id)
+    commitment = CommitmentDb.objects.get(id=commitment_id,user=request.user)
     return render(request,"edit_commitment.html",{"commitment":commitment})
 
 def update_commitment(request,commitment_id):

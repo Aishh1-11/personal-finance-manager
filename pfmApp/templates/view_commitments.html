@@ -65,7 +65,7 @@
 
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
           <div class="app-brand demo">
-            <a href="index.html" class="app-brand-link">
+            <a href="#" class="app-brand-link">
               <span class="app-brand-logo demo">
                 <svg
                   width="25"
@@ -349,7 +349,7 @@
                       <tr>
                           <th>Title</th>
                         <th>Amount</th>
-                        <th>Due day</th>
+                        <th>Due date</th>
                         <th>Is recurring</th>
                         <th>Note</th>
                         <th>Mark payment</th>
@@ -362,15 +362,26 @@
                       <tr>
                           <td>{{i.title}}</td>
                           <td>{{i.amount}}</td>
-                          <td>{{i.due_day}}</td>
+                          <td>{% if i.is_overdue %}
+                              <span class="badge bg-danger fw-bold">{{ i.due_day }} (Overdue)</span>
+                          {% else %}
+                              <p>{{i.due_day}}</p>
+
+                              {% endif %}
+                          </td>
                           <td>{{i.is_recurring}}</td>
                           <td>{{i.note}}</td>
-                          {% if not i.is_paid_this_month %}
+
+
+                          {% if i.is_overdue %}
                           <td><a href="{% url 'mark_commitment_paid' i.id %}" class="btn btn-danger">Mark as paid</a></td>
+
+                          {% elif not i.is_paid_this_month %}
+                          <td><a href="{% url 'mark_commitment_paid' i.id %}" class="btn btn-outline-warning">Mark as paid</a></td>
 
                           {% else %}
 
-                          <td><a href="#" class="btn btn-outline-success disabled"> paid</a></td>
+                          <td><a href="#" class="btn btn-success "> paid</a></td>
 
                           {% endif %}
 

@@ -65,7 +65,7 @@
 
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
           <div class="app-brand demo">
-            <a href="index.html" class="app-brand-link">
+            <a href="#" class="app-brand-link">
               <span class="app-brand-logo demo">
                 <svg
                   width="25"
@@ -392,15 +392,15 @@
           required>
       </div>
 
+<!-- TODO: onetime commitment-->
+<!--      <div class="mb-3">-->
+<!--        <label class="form-label">Is this recurring?</label>-->
+<!--        <select class="form-control" name="is_recurring" required>-->
+<!--          <option {% if commitment.is_recurring  %} selected {% endif %} value="True">Yes, repeats every month</option>-->
 
-      <div class="mb-3">
-        <label class="form-label">Is this recurring?</label>
-        <select class="form-control" name="is_recurring" required>
-          <option {% if commitment.is_recurring  %} selected {% endif %} value="True">Yes, repeats every month</option>
-
-          <option {% if not commitment.is_recurring %} selected {% endif %} value = "False">No, one-time only</option>
-        </select>
-      </div>
+<!--          <option {% if not commitment.is_recurring %} selected {% endif %} value = "False">No, one-time only</option>-->
+<!--        </select>-->
+<!--      </div>-->
 
 
       <div class="mb-3">
