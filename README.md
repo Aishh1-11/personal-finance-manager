@@ -1,4 +1,4 @@
-# Personal Finance Manager (PFM)
+# Personal Finance Manager 
 
 A **Personal Finance Manager** web application built using **Python & Django** to help users track income, expenses, and financial commitments in a structured and meaningful way. The goal of this project is to promote better money awareness, disciplined spending, and informed financial decisions.
 
