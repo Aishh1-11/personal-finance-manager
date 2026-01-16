@@ -51,6 +51,22 @@ def dashboard(request):
     spendable_amount = balance-remaining_commitments # can be neg # show warning
 
 
+    # safety,growth freedom fund
+
+    cumulative_safety = ExpenseDb.objects.filter(User=user,Category="Safety").aggregate(total=Sum('Amount'))['total'] or Decimal('0')
+    cumulative_growth = ExpenseDb.objects.filter(User=user, Category="Growth").aggregate(total=Sum('Amount'))[
+                            'total'] or Decimal('0')
+    cumulative_freedom = ExpenseDb.objects.filter(User=user, Category="Freedom").aggregate(total=Sum('Amount'))[
+                            'total'] or Decimal('0')
+
+
+    #monthly safety,growth freedom fund
+
+    monthly_safety = ExpenseDb.objects.filter(User=user,Category="Safety",Date__month=current_month,Date__year=current_year).aggregate(total=Sum('Amount'))['total'] or Decimal('0')
+    monthly_growth = ExpenseDb.objects.filter(User=user,Category="Growth",Date__month=current_month,Date__year=current_year).aggregate(total=Sum('Amount'))['total'] or Decimal('0')
+    monthly_freedom = ExpenseDb.objects.filter(User=user,Category="Freedom",Date__month=current_month,Date__year=current_year).aggregate(total=Sum('Amount'))['total'] or Decimal('0')
+
+
 
 
 
@@ -61,9 +77,18 @@ def dashboard(request):
 
 
     return render(request,"dashboard.html",{"user":user,"total_income": total_income,
+                                            "total_expense": total_expense,
                                             "current_month_name":current_month_name,
                                             "remaining_commitments":remaining_commitments,
-                                            "spendable_amount":spendable_amount,"balance":balance})
+                                            "spendable_amount":spendable_amount,"balance":balance,
+                                            "cumulative_safety":cumulative_safety,
+                                            "cumulative_growth":cumulative_growth,
+                                            "cumulative_freedom":cumulative_freedom,
+                                            "monthly_safety":monthly_safety,
+                                            "monthly_freedom":monthly_freedom,
+                                            "monthly_growth":monthly_growth,
+
+                                            })
 
 
 
@@ -301,6 +326,7 @@ def mark_commitment_paid(request,commitment_id):
 
 
     return redirect("view_commitment")
+
 
 
 
