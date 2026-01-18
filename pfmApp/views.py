@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect,get_object_or_404
+from django.shortcuts import render,redirect,get_object_or_404,reverse
 from django.contrib.auth import authenticate,login,logout
 from pfmApp.models import *
 from django.contrib.auth.decorators import login_required
@@ -21,20 +21,33 @@ def dashboard(request):
 
     # income total
     result  = IncomeDb.objects.filter(
-        User=user,
-        Date__month=current_month,
-        Date__year=current_year,
-    ).aggregate(total = Sum('Amount'))
+        user=user,
+        date__month=current_month,
+        date__year=current_year,
+    ).aggregate(total = Sum('amount'))
 
     total_income = result['total'] if result['total'] is not None else Decimal('0')
 
 
     # expense total
 
-    result = ExpenseDb.objects.filter(User=user,Date__month=current_month,Date__year=current_year).aggregate(total=Sum("Amount"))
+    result = ExpenseDb.objects.filter(user=user,date__month=current_month,date__year=current_year).aggregate(total=Sum("Amount"))
     total_expense = result['total'] if result['total'] is not None else Decimal("0")
 
-    balance = total_income-total_expense  # can be neg #show warning
+
+   # savings total month
+    monthly_total_savings = SavingsDb.objects.filter(user=user,date__month = current_month,date__year = current_year ).aggregate(total=Sum("amount"))['total'] or Decimal('0')
+
+    cumulative_savings = SavingsDb.objects.filter(user=user).aggregate(total = Sum('amount'))['total'] or Decimal("0")
+
+
+
+    balance = total_income-total_expense-monthly_total_savings  # can be neg #show warning
+
+
+
+
+
 
     # commitments_total
 
@@ -53,18 +66,25 @@ def dashboard(request):
 
     # safety,growth freedom fund
 
-    cumulative_safety = ExpenseDb.objects.filter(User=user,Category="Safety").aggregate(total=Sum('Amount'))['total'] or Decimal('0')
-    cumulative_growth = ExpenseDb.objects.filter(User=user, Category="Growth").aggregate(total=Sum('Amount'))[
+    cumulative_safety = SavingsDb.objects.filter(User=user,category="safety").aggregate(total=Sum('Amount'))['total'] or Decimal('0')
+
+    cumulative_freedom = SavingsDb.objects.filter(User=user, category="freedom").aggregate(total=Sum('Amount'))[
                             'total'] or Decimal('0')
-    cumulative_freedom = ExpenseDb.objects.filter(User=user, Category="Freedom").aggregate(total=Sum('Amount'))[
+
+    cumulative_growth = ExpenseDb.objects.filter(User=user, Category="Growth").aggregate(total=Sum('Amount'))[
                             'total'] or Decimal('0')
 
 
     #monthly safety,growth freedom fund
 
-    monthly_safety = ExpenseDb.objects.filter(User=user,Category="Safety",Date__month=current_month,Date__year=current_year).aggregate(total=Sum('Amount'))['total'] or Decimal('0')
+    monthly_safety = SavingsDb.objects.filter(User=user,category="safety",date__month=current_month,date__year=current_year).aggregate(total=Sum('Amount'))['total'] or Decimal('0')
+
+    monthly_freedom = SavingsDb.objects.filter(User=user,category="freedom",date__month=current_month,date__year=current_year).aggregate(total=Sum('Amount'))['total'] or Decimal('0')
+
     monthly_growth = ExpenseDb.objects.filter(User=user,Category="Growth",Date__month=current_month,Date__year=current_year).aggregate(total=Sum('Amount'))['total'] or Decimal('0')
-    monthly_freedom = ExpenseDb.objects.filter(User=user,Category="Freedom",Date__month=current_month,Date__year=current_year).aggregate(total=Sum('Amount'))['total'] or Decimal('0')
+
+
+
 
 
 
@@ -92,6 +112,9 @@ def dashboard(request):
 
 
 
+
+
+#**************************************************************************************************************************************************************************
 
 def user_registration_page(request):
     return render(request,"user_registration_page.html")
@@ -171,20 +194,20 @@ def save_income(request):
         date_input = request.POST.get("date")
         note = request.POST.get("note")
 
-        obj = IncomeDb(User=request.user,Amount=amnt,Income_source=src,Date=date_input,Note=note)
+        obj = IncomeDb(user=request.user,amount=amnt,income_source=src,date=date_input,note=note)
         obj.save()
 
     messages.success(request, "Income added successfully.")
     return redirect('view_income')
 
 def view_income(request):
-    income = IncomeDb.objects.filter(User=request.user)
+    income = IncomeDb.objects.filter(user=request.user)
 
     return render(request,"view_income.html",{"income":income})
 
 @login_required
 def edit_income(request,income_id):
-    income = IncomeDb.objects.get(id=income_id,User=request.user)
+    income = IncomeDb.objects.get(id=income_id,user=request.user)
     return render(request,"edit_income.html",{"income":income})
 
 def update_income(request,income_id):
@@ -195,7 +218,7 @@ def update_income(request,income_id):
         date = request.POST.get("date")
         note = request.POST.get("note")
 
-        obj = IncomeDb.objects.filter(id=income_id,User=request.user).update(Amount=amnt,Income_source=src,Date=date,Note=note)
+        obj = IncomeDb.objects.filter(id=income_id,user=request.user).update(amount=amnt,income_source=src,date=date,note=note)
     return redirect(view_income)
 
 @login_required
@@ -226,7 +249,7 @@ def save_expense(request):
         note = request.POST.get("note")
         cat = request.POST.get("category")
 
-        obj = ExpenseDb(User=request.user,Amount=amnt,Expense_title=title,Date=date,Note=note,Category=cat)
+        obj = ExpenseDb(user=request.user,amount=amnt,expense_title=title,date=date,note=note,category=cat)
         obj.save()
 
 
@@ -235,12 +258,12 @@ def save_expense(request):
 
 def view_expense(request):
 
-    expense = ExpenseDb.objects.filter(User=request.user)
+    expense = ExpenseDb.objects.filter(user=request.user)
     return render(request,"view_expense.html",{"expense":expense})
 
 def edit_expense(request,expense_id):
 
-    expense = ExpenseDb.objects.get(User=request.user,id=expense_id)
+    expense = ExpenseDb.objects.get(user=request.user,id=expense_id)
     return render(request,"edit_expense.html",{"expense":expense})
 
 def update_expense(request,expense_id):
@@ -253,12 +276,12 @@ def update_expense(request,expense_id):
         note = request.POST.get("note")
         cat = request.POST.get("category")
 
-        ExpenseDb.objects.filter(id=expense_id).update(Amount=amnt,Expense_title=title,Date=date,Note=note,Category=cat)
+        ExpenseDb.objects.filter(id=expense_id).update(amount=amnt,expense_title=title,date=date,note=note,category=cat)
         return redirect(view_expense)
 
 def delete_expense(request,expense_id):
 
-    expense = get_object_or_404(ExpenseDb,User=request.user,id=expense_id)
+    expense = get_object_or_404(ExpenseDb,user=request.user,id=expense_id)
     if request.method=="POST":
         expense.delete()
         return redirect(view_expense)
@@ -326,6 +349,87 @@ def mark_commitment_paid(request,commitment_id):
 
 
     return redirect("view_commitment")
+
+
+
+
+#*********************************************************************************************************************************************************
+
+def add_savings(request):
+
+    return render(request,"add_savings.html")
+
+def save_savings(request):
+
+    if request.method == "POST" :
+
+        amnt = request.POST.get("amount")
+        cat = request.POST.get("category")
+        date = request.POST.get("date")
+        note = request.POST.get("note")
+
+        SavingsDb.objects.create(user = request.user, amount = amnt, category = cat, date = date, note = note)
+
+    return redirect("add_savings")
+
+def view_savings(request):
+
+    savings = SavingsDb.objects.filter(user=request.user)
+    return render(request,"view_savings.html",{"savings":savings})
+
+def edit_savings(request, saving_id):
+
+    savings = SavingsDb.objects.get(user = request.user,id = saving_id)
+    return render(request, "edit_savings.html", {"savings":savings})
+
+def update_savings(request, saving_id):
+    if request.method == "POST":
+        amount = request.POST.get("amount")
+        cat = request.POST.get('category')
+        date = request.POST.get("date")
+        note = request.POST.get("note")
+
+        SavingsDb.objects.filter(user = request.user, id = saving_id).update(amount = amount, category = cat, date = date, note = note)
+    return redirect("view_savings")
+
+def delete_savings(request, saving_id):
+
+    saving = get_object_or_404(SavingsDb, user = request.user, id = saving_id)
+    if request.method == "POST":
+        saving.delete()
+
+    return redirect("view_savings")
+
+def withdraw_savings_page(request):
+
+    return render(request,"withdraw_savings.html")
+
+
+def save_withdrawal(request):
+
+    if request.method == "POST":
+        category = request.POST.get("category")
+        withdraw_amount = Decimal(request.POST.get("amount"))
+        date = request.POST.get("date")
+        note = request.POST.get("note")
+
+        current_balance = SavingsDb.objects.filter(user = request.user, category = category). aggregate(total = Sum("amount"))['total'] or Decimal('0')
+
+        if withdraw_amount > current_balance:
+            return redirect(reverse("view_savings") + "?error=insufficient")
+
+        SavingsDb.objects.create(
+            user=request.user,
+            category=category,
+            amount=-withdraw_amount,
+            date=date,
+            note=note or f"Withdraw from {category}"
+        )
+
+        messages.success(request, f"Successfully withdrew {withdraw_amount} from {category}.")
+        return redirect('view_savings')
+
+    return redirect("view_savings")
 
 
 

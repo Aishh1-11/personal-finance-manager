@@ -207,6 +207,26 @@
               </ul>
             </li>
 
+                  <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
+                <div data-i18n="Savings">Savings</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="{% url 'add_savings' %}" class="menu-link" >
+                    <div data-i18n="Savings">Add Savings</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="{% url 'view_savings' %}" class="menu-link" >
+                    <div data-i18n="Savings">View Savings</div>
+                  </a>
+                </li>
+
+              </ul>
+            </li>
+
             <!-- Components -->
             <li class="menu-header small text-uppercase"><span class="menu-header-text">Components</span></li>
             <!-- Cards -->
@@ -362,7 +382,7 @@
                         </div>
 
                           <div class="mb-3">
-                          <label class="form-label" for="source">Expense title</label>
+                          <label caslass="form-label" for="source">Expense title</label>
                           <input type="text" id="source" class="form-control phone-mask" placeholder="source" name="title">
                         </div>
 
@@ -372,9 +392,8 @@
                               <option selected disabled >select category</option>
 
                               <option value="Consumption">Consumption</option>
-                              <option value="Safety">Safety</option>
                               <option value="Growth">Growth</option>
-                              <option value="Freedom">Freedom</option>
+
                           </select>
                         </div>
 

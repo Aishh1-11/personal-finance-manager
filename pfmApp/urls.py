@@ -30,11 +30,24 @@ urlpatterns=[
     path("add_commitment/",views.add_commitment,name="add_commitment"),
     path("save_commitment/",views.save_commitment,name="save_commitment"),
     path("view_commitment/",views.view_commitment,name="view_commitment"),
-    path("edit_commitment/<int:commitment_id>",views.edit_commitment,name="edit_commitment"),
-    path("update_commitment/<int:commitment_id>",views.update_commitment,name="update_commitment"),
-    path("delete_commitment/<int:commitment_id>",views.delete_commitment,name="delete_commitment"),
+    path("edit_commitment/<int:commitment_id>/",views.edit_commitment,name="edit_commitment"),
+    path("update_commitment/<int:commitment_id>/",views.update_commitment,name="update_commitment"),
+    path("delete_commitment/<int:commitment_id>/",views.delete_commitment,name="delete_commitment"),
 
-    path("mark_commitment_paid/<int:commitment_id>",views.mark_commitment_paid,name="mark_commitment_paid"),
+    path("mark_commitment_paid/<int:commitment_id>/",views.mark_commitment_paid,name="mark_commitment_paid"),
+
+
+
+    path("add_savings/", views.add_savings, name="add_savings"),
+    path("save_savings/", views.save_savings, name="save_savings"),
+    path("view_savings/", views.view_savings, name="view_savings"),
+    path("edit_savings/<int:saving_id>/", views.edit_savings, name="edit_savings"),
+    path("update_savings/<int:saving_id>/", views.update_savings, name="update_savings"),
+    path("delete_savings/<int:saving_id>/", views.delete_savings, name="delete_savings"),
+    path("withdraw_savings/", views.withdraw_savings_page, name="withdraw_savings"),
+    path("save_withdrawal/", views.save_withdrawal, name="save_withdrawal"),
+
+
 
 
 ]
