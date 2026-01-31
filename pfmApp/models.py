@@ -15,14 +15,21 @@ class IncomeDb(models.Model):
     note = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.User}-{self.Income_source}"
+        return f"{self.user}-{self.income_source}"
 
 class ExpenseDb(models.Model):
+
+    EXPENSE_CATEGORIES = [
+        ('needs','Needs'),
+        ('wants', 'Wants'),
+        ('growth', 'Growth'),
+        ('commitment', 'Commitment')
+    ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     expense_title = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
-    category = models.CharField( max_length=50 )
+    category = models.CharField( max_length=50, choices = EXPENSE_CATEGORIES)
     note = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -72,7 +79,7 @@ class CommitmentDb(models.Model):
             self.last_paid_date = timezone.now().date()
             self.save()
 
-            ExpenseDb.objects.create(User=self.user,Expense_title=self.title,Amount=self.amount,Date=self.last_paid_date,Category="Commitment")
+            ExpenseDb.objects.create(user=self.user,expense_title=self.title,amount=self.amount,date=self.last_paid_date,category="commitment")
 
         return True
 
@@ -80,8 +87,9 @@ class CommitmentDb(models.Model):
 class SavingsDb(models.Model):
     SAVING_CATEGORIES = [
         ('safety', 'Safety Fund'),
-        ('freedom', 'Freedom Fund'),
+        ('future_freedom', 'Future Freedom'),
         ('goal', 'Goal Saving'),
+        ('investment', 'Investment Fund')
     ]
 
     user = models.ForeignKey(User, on_delete = models.CASCADE)

@@ -8,107 +8,113 @@ from datetime import date
 from django.db.models import Sum
 from django.utils.timezone import now
 from decimal import Decimal
+from pfmApp.services.finance_services import get_monthly_financial_summary
 
 
 # Create your views here.
 def dashboard(request):
-    user = request.user
-    today = now()
-    current_month = today.month
-    current_year = today.year
-    current_month_name = today.strftime("%B")
+    data = get_monthly_financial_summary(request.user)
+    data["current_month_name"] = now().strftime("%B")
+    return render(request, "dashboard.html", data)
 
 
-    # income total
-    result  = IncomeDb.objects.filter(
-        user=user,
-        date__month=current_month,
-        date__year=current_year,
-    ).aggregate(total = Sum('amount'))
-
-    total_income = result['total'] if result['total'] is not None else Decimal('0')
-
-
-    # expense total
-
-    result = ExpenseDb.objects.filter(user=user,date__month=current_month,date__year=current_year).aggregate(total=Sum("Amount"))
-    total_expense = result['total'] if result['total'] is not None else Decimal("0")
-
-
-   # savings total month
-    monthly_total_savings = SavingsDb.objects.filter(user=user,date__month = current_month,date__year = current_year ).aggregate(total=Sum("amount"))['total'] or Decimal('0')
-
-    cumulative_savings = SavingsDb.objects.filter(user=user).aggregate(total = Sum('amount'))['total'] or Decimal("0")
-
-
-
-    balance = total_income-total_expense-monthly_total_savings  # can be neg #show warning
-
-
-
-
-
-
-    # commitments_total
-
-    result = CommitmentDb.objects.filter(user=user).aggregate(total=Sum('amount'))
-    total_commitment = result['total'] if result['total'] is not None else Decimal('0')
-
-    remaining_commitments = Decimal('0')
-
-    for c in CommitmentDb.objects.filter(active=True,user=user):
-        if not c.is_paid_this_month():
-            remaining_commitments +=c.amount
-
-
-    spendable_amount = balance-remaining_commitments # can be neg # show warning
-
-
-    # safety,growth freedom fund
-
-    cumulative_safety = SavingsDb.objects.filter(User=user,category="safety").aggregate(total=Sum('Amount'))['total'] or Decimal('0')
-
-    cumulative_freedom = SavingsDb.objects.filter(User=user, category="freedom").aggregate(total=Sum('Amount'))[
-                            'total'] or Decimal('0')
-
-    cumulative_growth = ExpenseDb.objects.filter(User=user, Category="Growth").aggregate(total=Sum('Amount'))[
-                            'total'] or Decimal('0')
-
-
-    #monthly safety,growth freedom fund
-
-    monthly_safety = SavingsDb.objects.filter(User=user,category="safety",date__month=current_month,date__year=current_year).aggregate(total=Sum('Amount'))['total'] or Decimal('0')
-
-    monthly_freedom = SavingsDb.objects.filter(User=user,category="freedom",date__month=current_month,date__year=current_year).aggregate(total=Sum('Amount'))['total'] or Decimal('0')
-
-    monthly_growth = ExpenseDb.objects.filter(User=user,Category="Growth",Date__month=current_month,Date__year=current_year).aggregate(total=Sum('Amount'))['total'] or Decimal('0')
-
-
-
-
-
-
-
-
+   #  user = request.user
+   #  today = now()
+   #  current_month = today.month
+   #  current_year = today.year
+   #  current_month_name = today.strftime("%B")
+   #
+   #
+   #  # income total
+   #  result  = IncomeDb.objects.filter(
+   #      user=user,
+   #      date__month=current_month,
+   #      date__year=current_year,
+   #  ).aggregate(total = Sum('amount'))
+   #
+   #  total_income = result['total'] if result['total'] is not None else Decimal('0')
+   #
+   #
+   #  # expense total
+   #
+   #  result = ExpenseDb.objects.filter(user=user,date__month=current_month,date__year=current_year).aggregate(total=Sum("amount"))
+   #  total_expense = result['total'] if result['total'] is not None else Decimal("0")
+   #
+   #
+   # # savings total month
+   #  monthly_total_savings = SavingsDb.objects.filter(user=user,date__month = current_month,date__year = current_year ).aggregate(total=Sum("amount"))['total'] or Decimal('0')
+   #
+   #  cumulative_savings = SavingsDb.objects.filter(user=user).aggregate(total = Sum('amount'))['total'] or Decimal("0")
+   #
+   #
+   #
+   #  balance = total_income-total_expense-monthly_total_savings  # can be neg #show warning
+   #
+   #
+   #
+   #
+   #
+   #
+   #  # commitments_total
+   #
+   #  result = CommitmentDb.objects.filter(user=user,active=True).aggregate(total=Sum('amount'))
+   #  total_commitment = result['total'] if result['total'] is not None else Decimal('0')
+   #
+   #  remaining_commitments = Decimal('0')
+   #
+   #  for c in CommitmentDb.objects.filter(active=True,user=user):
+   #      if not c.is_paid_this_month():
+   #          remaining_commitments +=c.amount
+   #
+   #
+   #  spendable_amount = balance-remaining_commitments # can be neg # show warning
+   #
+   #
+   #  # safety,growth freedom fund
+   #
+   #  cumulative_safety = SavingsDb.objects.filter(user=user,category="safety").aggregate(total=Sum('amount'))['total'] or Decimal('0')
+   #
+   #  cumulative_freedom = SavingsDb.objects.filter(user=user, category="freedom").aggregate(total=Sum('amount'))[
+   #                          'total'] or Decimal('0')
+   #
+   #  cumulative_growth = ExpenseDb.objects.filter(user=user, category="Growth").aggregate(total=Sum('amount'))[
+   #                          'total'] or Decimal('0')
+   #
+   #
+   #  #monthly safety,growth freedom fund
+   #
+   #  monthly_safety = SavingsDb.objects.filter(user=user,category="safety",date__month=current_month,date__year=current_year).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+   #
+   #  monthly_freedom = SavingsDb.objects.filter(user=user,category="freedom",date__month=current_month,date__year=current_year).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+   #
+   #  monthly_growth = ExpenseDb.objects.filter(user=user,category="Growth",date__month=current_month,date__year=current_year).aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
 
 
 
 
 
-    return render(request,"dashboard.html",{"user":user,"total_income": total_income,
-                                            "total_expense": total_expense,
-                                            "current_month_name":current_month_name,
-                                            "remaining_commitments":remaining_commitments,
-                                            "spendable_amount":spendable_amount,"balance":balance,
-                                            "cumulative_safety":cumulative_safety,
-                                            "cumulative_growth":cumulative_growth,
-                                            "cumulative_freedom":cumulative_freedom,
-                                            "monthly_safety":monthly_safety,
-                                            "monthly_freedom":monthly_freedom,
-                                            "monthly_growth":monthly_growth,
 
-                                            })
+
+
+
+
+
+
+
+    # return render(request,"dashboard.html",{"user":user,"total_income": total_income,
+    #                                         "total_expense": total_expense,
+    #                                         "current_month_name":current_month_name,
+    #                                         "remaining_commitments":remaining_commitments,
+    #                                         "spendable_amount":spendable_amount,"balance":balance,
+    #                                         "cumulative_safety":cumulative_safety,
+    #                                         "cumulative_growth":cumulative_growth,
+    #                                         "cumulative_freedom":cumulative_freedom,
+    #                                         "monthly_safety":monthly_safety,
+    #                                         "monthly_freedom":monthly_freedom,
+    #                                         "monthly_growth":monthly_growth,
+    #
+    #                                         })
 
 
 
@@ -180,7 +186,7 @@ def user_logout(request):
     return redirect("login_page")
 
 # ****************************************************************************************************************************************
-
+@login_required
 def add_income(request):
     return render(request,"add_income.html",{'today':date.today()})
 
@@ -199,16 +205,17 @@ def save_income(request):
 
     messages.success(request, "Income added successfully.")
     return redirect('view_income')
-
+@login_required
 def view_income(request):
     income = IncomeDb.objects.filter(user=request.user)
 
     return render(request,"view_income.html",{"income":income})
 
-@login_required
+
 def edit_income(request,income_id):
     income = IncomeDb.objects.get(id=income_id,user=request.user)
     return render(request,"edit_income.html",{"income":income})
+
 
 def update_income(request,income_id):
 
@@ -219,12 +226,12 @@ def update_income(request,income_id):
         note = request.POST.get("note")
 
         obj = IncomeDb.objects.filter(id=income_id,user=request.user).update(amount=amnt,income_source=src,date=date,note=note)
-    return redirect(view_income)
+    return redirect("view_income")
 
 @login_required
 def delete_income(request,income_id):
 
-    income = get_object_or_404(IncomeDb, id=income_id, User=request.user)
+    income = get_object_or_404(IncomeDb, id=income_id, user=request.user)
 
     if request.method == "POST":
         income.delete()
@@ -234,7 +241,7 @@ def delete_income(request,income_id):
 
 # ****************************************************************************************************************************************
 
-
+@login_required
 def add_expense(request):
     return render(request,"add_expense.html",{'today':date.today()})
 
@@ -255,7 +262,7 @@ def save_expense(request):
 
     return redirect('add_expense')
 
-
+@login_required
 def view_expense(request):
 
     expense = ExpenseDb.objects.filter(user=request.user)
