@@ -21,24 +21,24 @@
 
                         <div class="mb-3">
                           <label class="form-label" for="amount">Amount</label>
-                          <input type="number" class="form-control" id="amount" value="{{income.Amount}}" name="amount">
+                          <input type="number" class="form-control" id="amount" value="{{income.amount}}" name="amount">
                         </div>
 
 
                         <div class="mb-3">
                           <label class="form-label" for="date">Date</label>
-                   <input type="date" id="date" class="form-control" name="date" value="{{ income.Date|date:'Y-m-d' }}">
+                   <input type="date" id="date" class="form-control" name="date" value="{{ income.date|date:'Y-m-d' }}">
 
                         </div>
 
                           <div class="mb-3">
                           <label class="form-label" for="source">Source</label>
-                          <input type="text" id="source" class="form-control phone-mask" value="{{income.Income_source}}" name="source">
+                          <input type="text" id="source" class="form-control phone-mask" value="{{income.income_source}}" name="source">
                         </div>
 
                               <div class="mb-3">
                           <label class="form-label" for="source">Note</label>
-                          <textarea rows="3" name="note"  class="form-control phone-mask" >{{income.Note}}</textarea>
+                          <textarea rows="3" name="note"  class="form-control phone-mask" >{{income.note}}</textarea>
                         </div>
 
 

@@ -282,17 +282,7 @@
 
               <ul class="navbar-nav flex-row align-items-center ms-auto">
                 <!-- Place this tag where you want the button to render. -->
-                <li class="nav-item lh-1 me-3">
-                  <a
-                    class="github-button"
-                    href="https://github.com/themeselection/sneat-html-admin-template-free"
-                    data-icon="octicon-star"
-                    data-size="large"
-                    data-show-count="true"
-                    aria-label="Star themeselection/sneat-html-admin-template-free on GitHub"
-                    >Star</a
-                  >
-                </li>
+
 
                 <!-- User -->
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
@@ -486,7 +476,7 @@
                               </div>
                             </div>
                           </div>
-                          <span class="d-block mb-1">Spendable amount</span>
+                          <span class="d-block mb-1">Free to Spend amount</span>
                             {% if spendable_amount <= 0 %}
                           <h3 class="card-title text-nowrap mb-2 text-danger fw-bold">{{spendable_amount}}</h3>
                             {% else %}
@@ -582,9 +572,9 @@
 
 
                     </div>
-                  <!--expense end-->
+                  <!--bal end-->
 
-                       <!-- expense start-->
+                     <!-- ex start-->
                   <div class="col-lg-3 col-md-6 col-6 mb-4">
                         <div class="card bg-dark text-white">
                         <div class="card-body">
@@ -613,8 +603,8 @@
                               </div>
                             </div>
                           </div>
-                          <span class="fw-semibold d-block mb-1">Total Expense</span>
-                          <h3 class="card-title mb-2">{{total_expense}}</h3>
+                          <span class="fw-semibold d-block mb-1">Account Balance</span>
+                          <h3 class="card-title mb-2">{{balance}}</h3>
 
                             <a href="{% url 'view_expense' %}"><small class="text-primary fw-semibold"></small></a>
                         </div>
@@ -624,6 +614,8 @@
 
                     </div>
                   <!--expense end-->
+
+
 
 
 
@@ -680,11 +672,11 @@
 
 
                     </div>
-                  <!--spendable end-->
+                  <!--safety end-->
 
 
 
-                   <!-- freedom start-->
+                   <!-- future freedom start-->
                   <div class="col-lg-4 col-md-12 col-12 mb-4">
                       <div class="card bg-dark text-white">
                         <div class="card-body ">
@@ -709,11 +701,11 @@
                               </div>
                             </div>
                           </div>
-                          <span class="d-block mb-1">Freedom</span>
+                          <span class="d-block mb-1">Future Freedom</span>
 
-                          <h4 class="card-title text-nowrap mb-2 text-success fw-bold">total invested - {{cumulative_freedom}}</h4>
+                          <h4 class="card-title text-nowrap mb-2 text-success fw-bold">total invested - {{cumulative_retirement}}</h4>
 
-                            <h5 class="card-title text-nowrap mb-2 ">current month - {{monthly_freedom}}</h5>
+                            <h5 class="card-title text-nowrap mb-2 ">current month - {{monthly_retirement}}</h5>
                         </div>
                       </div>
 
@@ -750,11 +742,11 @@
                               </div>
                             </div>
                           </div>
-                          <span class="d-block mb-1">Growth</span>
+                          <span class="d-block mb-1">Investment</span>
 
-                          <h4 class="card-title text-nowrap mb-2 text-success fw-bold">total invested - {{cumulative_growth}}</h4>
+                          <h4 class="card-title text-nowrap mb-2 text-success fw-bold">total invested - {{cumulative_investment}}</h4>
 
-                            <h5 class="card-title text-nowrap mb-2 ">current month - {{monthly_growth}}</h5>
+                            <h5 class="card-title text-nowrap mb-2 ">current month - {{monthly_investment}}</h5>
 
                             <a href="{% url 'view_expense' %}"><small class="text-primary fw-semibold"></small></a>
                         </div>

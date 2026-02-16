@@ -278,17 +278,7 @@
 
               <ul class="navbar-nav flex-row align-items-center ms-auto">
                 <!-- Place this tag where you want the button to render. -->
-                <li class="nav-item lh-1 me-3">
-                  <a
-                    class="github-button"
-                    href="https://github.com/themeselection/sneat-html-admin-template-free"
-                    data-icon="octicon-star"
-                    data-size="large"
-                    data-show-count="true"
-                    aria-label="Star themeselection/sneat-html-admin-template-free on GitHub"
-                    >Star</a
-                  >
-                </li>
+
 
                 <!-- User -->
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
@@ -386,16 +376,16 @@
                           <input type="text" id="source" class="form-control phone-mask" placeholder="source" name="title">
                         </div>
 
-                          <div class="mb-3">
-                          <label class="form-label"  >category</label>
-                          <select class="form-control phone-mask" name="category">
-                              <option selected disabled >select category</option>
+                      <div class="mb-3">
+    <label class="form-label" for="category">Category</label>
+    <select class="form-control" id="category" name="category" required>
+        <option value="" selected disabled>Select category</option>
+        <option value="needs">Needs</option>
+        <option value="wants">Wants</option>
+        <option value="growth">Growth</option>
 
-                              <option value="Consumption">Consumption</option>
-
-
-                          </select>
-                        </div>
+    </select>
+</div>
 
                               <div class="mb-3">
                           <label class="form-label" for="source">Note</label>

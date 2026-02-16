@@ -7,7 +7,7 @@ from django.db.models import Sum
 def get_monthly_financial_summary(user, month=None, year=None):
     today = now()
     month = month or today.month
-    year = year or today.year
+    year  = year or today.year
 
     # income
     total_income = IncomeDb.objects.filter(
@@ -40,6 +40,54 @@ def get_monthly_financial_summary(user, month=None, year=None):
     cumulative_goal = SavingsDb.objects.filter(user=user, category='goal').aggregate(total=Sum('amount'))['total'] or Decimal('0')
     cumulative_investment = SavingsDb.objects.filter(user=user, category='investment').aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
+
+
+    #monthly
+    monthly_safety = SavingsDb.objects.filter(user=user,category='safety', date__month = month, date__year = year).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+    monthly_retirement = SavingsDb.objects.filter(user=user,category="future_freedom", date__month= month, date__year = year).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+    monthly_investment = SavingsDb.objects.filter(user=user,category='investment').aggregate(total=Sum("amount"))['total'] or Decimal("0")
+
+    # expense
+    expense_needs = ExpenseDb.objects.filter(
+        user=user, category='needs', date__month=month, date__year=year
+    ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+
+    expense_wants = ExpenseDb.objects.filter(
+        user=user, category='wants', date__month=month, date__year=year
+    ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+
+    expense_growth = ExpenseDb.objects.filter(
+        user=user, category='growth', date__month=month, date__year=year
+    ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+
+
+
+    #chart data
+    savings_investments = monthly_investment
+    savings_future = monthly_retirement
+    savings_safety = monthly_safety
+
+    chart_data = {
+        "outer":{
+            "Expense": float(total_expense),
+            "Savings":float(monthly_total_savings),
+            "Balance": float(balance),
+
+        },
+
+        "expense_inner":{
+            "Needs":float(expense_needs),
+            "Wants":float(expense_wants),
+            "Growth":float(expense_growth)
+        },
+
+        "savings_inner":{
+            "Investments":float(savings_investments),
+            "Future_Freedom":float(savings_future),
+            "Safety":float(savings_safety),
+        }
+    }
+
     return {
         "total_income": total_income,
         "total_expense": total_expense,
@@ -51,4 +99,8 @@ def get_monthly_financial_summary(user, month=None, year=None):
         "cumulative_goal": cumulative_goal,
         "cumulative_investment": cumulative_investment,
         "monthly_total_savings": monthly_total_savings,
+        "monthly_safety":monthly_safety,
+        "monthly_retirement":monthly_retirement,
+        "monthly_investment":monthly_investment,
+        "chart_data": chart_data,
     }
