@@ -1,144 +1,313 @@
 
+<!--<!DOCTYPE html>-->
+
+<!--{% load static %}-->
+<!--<html-->
+<!--  lang="en"-->
+<!--  class="light-style layout-menu-fixed"-->
+<!--  dir="ltr"-->
+<!--  data-theme="theme-default"-->
+<!--  data-assets-path="../assets/"-->
+<!--  data-template="vertical-menu-template-free"-->
+<!--&gt;-->
+<!--  <head>-->
+<!--    <meta charset="utf-8" />-->
+<!--    <meta-->
+<!--      name="viewport"-->
+<!--      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"-->
+<!--    />-->
+
+<!--    <title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>-->
+
+<!--    <meta name="description" content="" />-->
+
+<!--    &lt;!&ndash; Favicon &ndash;&gt;-->
+<!--    <link rel="icon" type="image/x-icon" href="{% static 'pfm_admin/img/favicon/favicon.ico' %}" />-->
+
+<!--    &lt;!&ndash; Fonts &ndash;&gt;-->
+<!--    <link rel="preconnect" href="https://fonts.googleapis.com" />-->
+<!--    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />-->
+<!--    <link-->
+<!--      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"-->
+<!--      rel="stylesheet"-->
+<!--    />-->
+
+<!--    &lt;!&ndash; Icons. Uncomment required icon fonts &ndash;&gt;-->
+<!--    <link rel="stylesheet" href="{% static 'pfm_admin/vendor/fonts/boxicons.css' %}" />-->
+<!--      <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">-->
+
+
+<!--    &lt;!&ndash; Core CSS &ndash;&gt;-->
+<!--    <link rel="stylesheet" href="{% static 'pfm_admin/vendor/css/core.css' %}" class="template-customizer-core-css" />-->
+<!--    <link rel="stylesheet" href="{% static 'pfm_admin/vendor/css/theme-default.css' %}" class="template-customizer-theme-css" />-->
+<!--    <link rel="stylesheet" href="{% static 'pfm_admin/css/demo.css' %}" />-->
+
+<!--    &lt;!&ndash; Vendors CSS &ndash;&gt;-->
+<!--    <link rel="stylesheet" href="{% static 'pfm_admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.css' %}" />-->
+
+<!--    <link rel="stylesheet" href="{% static 'pfm_admin/vendor/libs/apex-charts/apex-charts.css' %}" />-->
+
+<!--    &lt;!&ndash; Page CSS &ndash;&gt;-->
+
+<!--    &lt;!&ndash; Helpers &ndash;&gt;-->
+<!--    <script src="{% static 'pfm_admin/vendor/js/helpers.js' %}"></script>-->
+
+<!--    &lt;!&ndash;! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section &ndash;&gt;-->
+<!--    &lt;!&ndash;? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  &ndash;&gt;-->
+<!--    <script src="{% static 'pfm_admin/js/config.js' %}"></script>-->
+<!--  </head>-->
+
+<!--  <body class="bg-dark">-->
+
+<!--<div class="container-xxl flex-grow-1 container-p-y d-flex justify-content-center align-items-center " style="min-height: 100vh;">-->
+
+<!--  <div class="row justify-content-center w-100">-->
+
+<!--    <div class="col-12 col-lg-6 col-xl-5">-->
+
+<!--      <div class="card mb-4 bg-light">-->
+
+<!--        <div class="card-header">-->
+<!--          <h5 class="mb-0">Login</h5>-->
+<!--        </div>-->
+
+<!--        <div class="card-body">-->
+
+<!--          <form method="post" action="{% url 'user_login' %}">-->
+<!--              {% csrf_token %}-->
+
+<!--            <div class="mb-3 row">-->
+<!--              <label class="col-sm-3 col-form-label" for="username">Username</label>-->
+<!--              <div class="col-sm-9">-->
+<!--                <div class="input-group input-group-merge">-->
+<!--                  <span class="input-group-text">-->
+<!--                    <i class="bx bx-user"></i>-->
+<!--                  </span>-->
+<!--                  <input type="text" id="username" name="username" class="form-control" placeholder="USERNAME" />-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--            <div class="mb-3 row">-->
+<!--              <label class="col-sm-3 col-form-label" for="password">Password</label>-->
+<!--              <div class="col-sm-9">-->
+<!--                <div class="input-group input-group-merge">-->
+<!--                  <input type="password" id="password" name="password" class="form-control" placeholder="PASSWORD" />-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--            <div class="row justify-content-end">-->
+<!--              <div class="col-sm-9">-->
+<!--                <button type="submit" class="btn btn-primary">Login</button>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--              Don't have an account?-->
+<!--<a href="{% url 'user_registration_page' %}">Create one</a>-->
+
+<!--          </form>-->
+
+<!--        </div>-->
+<!--      </div>-->
+
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+
+
+
+
+<!--    &lt;!&ndash; Core JS &ndash;&gt;-->
+<!--    &lt;!&ndash; build:js assets/vendor/js/core.js &ndash;&gt;-->
+<!--    <script src="{% static 'pfm_admin/vendor/libs/jquery/jquery.js' %}"></script>-->
+<!--    <script src="{% static 'pfm_admin/vendor/libs/popper/popper.js' %}"></script>-->
+<!--    <script src="{% static 'pfm_admin/vendor/js/bootstrap.js' %}"></script>-->
+<!--    <script src="{% static 'pfm_admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js' %}"></script>-->
+
+<!--    <script src="{% static 'pfm_admin/vendor/js/menu.js' %}"></script>-->
+<!--    &lt;!&ndash; endbuild &ndash;&gt;-->
+
+<!--    &lt;!&ndash; Vendors JS &ndash;&gt;-->
+<!--    <script src="{% static 'pfm_admin/vendor/libs/apex-charts/apexcharts.js' %}"></script>-->
+
+<!--    &lt;!&ndash; Main JS &ndash;&gt;-->
+<!--    <script src="{% static 'pfm_admin/js/main.js' %}"></script>-->
+
+<!--    &lt;!&ndash; Page JS &ndash;&gt;-->
+<!--    <script src="{% static 'pfm_admin/js/dashboards-analytics.js' %}"></script>-->
+
+<!--    &lt;!&ndash; Place this tag in your head or just before your close body tag. &ndash;&gt;-->
+<!--    <script async defer src="https://buttons.github.io/buttons.js' %}"></script>-->
+<!--  </body>-->
+<!--</html>-->
+
+
 <!DOCTYPE html>
-
 {% load static %}
-<html
-  lang="en"
-  class="light-style layout-menu-fixed"
-  dir="ltr"
-  data-theme="theme-default"
-  data-assets-path="../assets/"
-  data-template="vertical-menu-template-free"
->
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
-    />
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | Personal Finance Manager</title>
 
-    <title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+<link rel="icon" href="{% static 'pfm_admin/img/favicon/favicon.ico' %}">
 
-    <meta name="description" content="" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{% static 'pfm_admin/img/favicon/favicon.ico' %}" />
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-      rel="stylesheet"
-    />
+body{
+    height:100vh;
+    background:linear-gradient(135deg,#0f172a,#020617);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
 
-    <!-- Icons. Uncomment required icon fonts -->
-    <link rel="stylesheet" href="{% static 'pfm_admin/vendor/fonts/boxicons.css' %}" />
-      <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+/* Card */
+.login-card{
+    width:420px;
+    background:rgba(15,23,42,0.85);
+    backdrop-filter:blur(15px);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:18px;
+    padding:40px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
 
+/* Title */
+.login-title{
+    color:#fff;
+    text-align:center;
+    font-size:28px;
+    font-weight:600;
+    margin-bottom:8px;
+}
 
-    <!-- Core CSS -->
-    <link rel="stylesheet" href="{% static 'pfm_admin/vendor/css/core.css' %}" class="template-customizer-core-css" />
-    <link rel="stylesheet" href="{% static 'pfm_admin/vendor/css/theme-default.css' %}" class="template-customizer-theme-css" />
-    <link rel="stylesheet" href="{% static 'pfm_admin/css/demo.css' %}" />
+.login-subtitle{
+    text-align:center;
+    color:#94a3b8;
+    margin-bottom:30px;
+    font-size:14px;
+}
 
-    <!-- Vendors CSS -->
-    <link rel="stylesheet" href="{% static 'pfm_admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.css' %}" />
+/* Input */
+.form-group{
+    margin-bottom:20px;
+}
 
-    <link rel="stylesheet" href="{% static 'pfm_admin/vendor/libs/apex-charts/apex-charts.css' %}" />
+.form-label{
+    color:#cbd5e1;
+    font-size:14px;
+    margin-bottom:6px;
+    display:block;
+}
 
-    <!-- Page CSS -->
+.form-control{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1px solid #1e293b;
+    background:#020617;
+    color:white;
+    outline:none;
+    transition:0.3s;
+}
 
-    <!-- Helpers -->
-    <script src="{% static 'pfm_admin/vendor/js/helpers.js' %}"></script>
+.form-control:focus{
+    border-color:#6366f1;
+    box-shadow:0 0 0 2px rgba(99,102,241,0.2);
+}
 
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-    <script src="{% static 'pfm_admin/js/config.js' %}"></script>
-  </head>
+/* Button */
+.login-btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
 
-  <body class="bg-dark">
+.login-btn:hover{
+    transform:translateY(-1px);
+    box-shadow:0 10px 25px rgba(99,102,241,0.4);
+}
 
-<div class="container-xxl flex-grow-1 container-p-y d-flex justify-content-center align-items-center " style="min-height: 100vh;">
+/* Footer */
+.login-footer{
+    text-align:center;
+    margin-top:20px;
+    color:#94a3b8;
+    font-size:14px;
+}
 
-  <div class="row justify-content-center w-100">
+.login-footer a{
+    color:#818cf8;
+    text-decoration:none;
+    font-weight:500;
+}
 
-    <div class="col-12 col-lg-6 col-xl-5">
+.login-footer a:hover{
+    text-decoration:underline;
+}
 
-      <div class="card mb-4">
+/* Glow effect */
+.login-card::before{
+    content:"";
+    position:absolute;
+    width:200px;
+    height:200px;
+    background:radial-gradient(circle,#6366f1,transparent);
+    filter:blur(80px);
+    top:-80px;
+    left:-80px;
+    opacity:0.4;
+}
+</style>
+</head>
 
-        <div class="card-header">
-          <h5 class="mb-0">Login</h5>
+<body>
+
+<div class="login-card">
+
+    <h2 class="login-title">Welcome Back</h2>
+    <p class="login-subtitle">Login to your Personal Finance Manager</p>
+
+    <form method="post" action="{% url 'user_login' %}">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" placeholder="Enter your username" required>
         </div>
 
-        <div class="card-body">
-
-          <form method="post" action="{% url 'user_login' %}">
-              {% csrf_token %}
-
-            <div class="mb-3 row">
-              <label class="col-sm-3 col-form-label" for="username">Username</label>
-              <div class="col-sm-9">
-                <div class="input-group input-group-merge">
-                  <span class="input-group-text">
-                    <i class="bx bx-user"></i>
-                  </span>
-                  <input type="text" id="username" name="username" class="form-control" placeholder="USERNAME" />
-                </div>
-              </div>
-            </div>
-
-            <div class="mb-3 row">
-              <label class="col-sm-3 col-form-label" for="password">Password</label>
-              <div class="col-sm-9">
-                <div class="input-group input-group-merge">
-                  <input type="password" id="password" name="password" class="form-control" placeholder="PASSWORD" />
-                </div>
-              </div>
-            </div>
-
-            <div class="row justify-content-end">
-              <div class="col-sm-9">
-                <button type="submit" class="btn btn-primary">Login</button>
-              </div>
-            </div>
-
-              Don't have an account?
-<a href="{% url 'user_registration_page' %}">Create one</a>
-
-          </form>
-
+        <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
         </div>
-      </div>
 
-    </div>
-  </div>
+        <button type="submit" class="login-btn">Login</button>
+
+        <div class="login-footer">
+            Don't have an account?
+            <a href="{% url 'user_registration_page' %}">Create one</a>
+        </div>
+
+    </form>
+
 </div>
 
-
-
-
-
-    <!-- Core JS -->
-    <!-- build:js assets/vendor/js/core.js -->
-    <script src="{% static 'pfm_admin/vendor/libs/jquery/jquery.js' %}"></script>
-    <script src="{% static 'pfm_admin/vendor/libs/popper/popper.js' %}"></script>
-    <script src="{% static 'pfm_admin/vendor/js/bootstrap.js' %}"></script>
-    <script src="{% static 'pfm_admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js' %}"></script>
-
-    <script src="{% static 'pfm_admin/vendor/js/menu.js' %}"></script>
-    <!-- endbuild -->
-
-    <!-- Vendors JS -->
-    <script src="{% static 'pfm_admin/vendor/libs/apex-charts/apexcharts.js' %}"></script>
-
-    <!-- Main JS -->
-    <script src="{% static 'pfm_admin/js/main.js' %}"></script>
-
-    <!-- Page JS -->
-    <script src="{% static 'pfm_admin/js/dashboards-analytics.js' %}"></script>
-
-    <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="https://buttons.github.io/buttons.js' %}"></script>
-  </body>
+</body>
 </html>

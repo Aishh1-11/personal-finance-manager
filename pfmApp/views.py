@@ -9,112 +9,21 @@ from django.db.models import Sum
 from django.utils.timezone import now
 from decimal import Decimal
 from pfmApp.services.finance_services import get_monthly_financial_summary
-
+import json
 
 # Create your views here.
 def dashboard(request):
-    data = get_monthly_financial_summary(request.user)
-    data["current_month_name"] = now().strftime("%B")
-    return render(request, "dashboard.html", data)
+    summary = get_monthly_financial_summary(request.user)
 
 
-   #  user = request.user
-   #  today = now()
-   #  current_month = today.month
-   #  current_year = today.year
-   #  current_month_name = today.strftime("%B")
-   #
-   #
-   #  # income total
-   #  result  = IncomeDb.objects.filter(
-   #      user=user,
-   #      date__month=current_month,
-   #      date__year=current_year,
-   #  ).aggregate(total = Sum('amount'))
-   #
-   #  total_income = result['total'] if result['total'] is not None else Decimal('0')
-   #
-   #
-   #  # expense total
-   #
-   #  result = ExpenseDb.objects.filter(user=user,date__month=current_month,date__year=current_year).aggregate(total=Sum("amount"))
-   #  total_expense = result['total'] if result['total'] is not None else Decimal("0")
-   #
-   #
-   # # savings total month
-   #  monthly_total_savings = SavingsDb.objects.filter(user=user,date__month = current_month,date__year = current_year ).aggregate(total=Sum("amount"))['total'] or Decimal('0')
-   #
-   #  cumulative_savings = SavingsDb.objects.filter(user=user).aggregate(total = Sum('amount'))['total'] or Decimal("0")
-   #
-   #
-   #
-   #  balance = total_income-total_expense-monthly_total_savings  # can be neg #show warning
-   #
-   #
-   #
-   #
-   #
-   #
-   #  # commitments_total
-   #
-   #  result = CommitmentDb.objects.filter(user=user,active=True).aggregate(total=Sum('amount'))
-   #  total_commitment = result['total'] if result['total'] is not None else Decimal('0')
-   #
-   #  remaining_commitments = Decimal('0')
-   #
-   #  for c in CommitmentDb.objects.filter(active=True,user=user):
-   #      if not c.is_paid_this_month():
-   #          remaining_commitments +=c.amount
-   #
-   #
-   #  spendable_amount = balance-remaining_commitments # can be neg # show warning
-   #
-   #
-   #  # safety,growth freedom fund
-   #
-   #  cumulative_safety = SavingsDb.objects.filter(user=user,category="safety").aggregate(total=Sum('amount'))['total'] or Decimal('0')
-   #
-   #  cumulative_freedom = SavingsDb.objects.filter(user=user, category="freedom").aggregate(total=Sum('amount'))[
-   #                          'total'] or Decimal('0')
-   #
-   #  cumulative_growth = ExpenseDb.objects.filter(user=user, category="Growth").aggregate(total=Sum('amount'))[
-   #                          'total'] or Decimal('0')
-   #
-   #
-   #  #monthly safety,growth freedom fund
-   #
-   #  monthly_safety = SavingsDb.objects.filter(user=user,category="safety",date__month=current_month,date__year=current_year).aggregate(total=Sum('amount'))['total'] or Decimal('0')
-   #
-   #  monthly_freedom = SavingsDb.objects.filter(user=user,category="freedom",date__month=current_month,date__year=current_year).aggregate(total=Sum('amount'))['total'] or Decimal('0')
-   #
-   #  monthly_growth = ExpenseDb.objects.filter(user=user,category="Growth",date__month=current_month,date__year=current_year).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+    context = {
+        "summary": summary,
+        "chart_data": json.dumps(summary["chart_data"]),
+        "current_month_name": now().strftime("%B"),
+    }
 
+    return render(request, "dashboard.html", context)
 
-
-
-
-
-
-
-
-
-
-
-
-
-    # return render(request,"dashboard.html",{"user":user,"total_income": total_income,
-    #                                         "total_expense": total_expense,
-    #                                         "current_month_name":current_month_name,
-    #                                         "remaining_commitments":remaining_commitments,
-    #                                         "spendable_amount":spendable_amount,"balance":balance,
-    #                                         "cumulative_safety":cumulative_safety,
-    #                                         "cumulative_growth":cumulative_growth,
-    #                                         "cumulative_freedom":cumulative_freedom,
-    #                                         "monthly_safety":monthly_safety,
-    #                                         "monthly_freedom":monthly_freedom,
-    #                                         "monthly_growth":monthly_growth,
-    #
-    #                                         })
 
 
 
@@ -318,31 +227,7 @@ def view_commitment(request):
     commitments = CommitmentDb.objects.filter(user=request.user)
     return render(request,"view_commitments.html",{"commitments":commitments})
 
-def edit_commitment(request,commitment_id):
-    commitment = CommitmentDb.objects.get(id=commitment_id,user=request.user)
-    return render(request,"edit_commitment.html",{"commitment":commitment})
 
-def update_commitment(request,commitment_id):
-    if request.method == "POST":
-
-        title = request.POST.get("title")
-        amt = request.POST.get("amount")
-        due = request.POST.get("due_day")
-        is_r = request.POST.get("is_recurring")
-        note = request.POST.get("note")
-
-        CommitmentDb.objects.filter(id=commitment_id).update(user=request.user,title=title,amount=amt,due_day=due,is_recurring=is_r,note=note)
-
-    return redirect("view_commitment")
-
-def delete_commitment(request,commitment_id):
-
-    commitment = get_object_or_404(CommitmentDb,user=request.user,id=commitment_id)
-    if request.method == "POST":
-        commitment.delete()
-        return redirect("view_commitment")
-
-    return redirect("view_commitment")
 
 def mark_commitment_paid(request,commitment_id):
     commitment = get_object_or_404(CommitmentDb,id=commitment_id,user=request.user)

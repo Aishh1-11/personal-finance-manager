@@ -1,0 +1,144 @@
+/* Background */
+body {
+    background: radial-gradient(circle at top, #0b0f19, #05070d);
+    min-height: 100vh;
+    color: #e5e7eb;
+}
+
+.menu-link:hover {
+    background: rgba(99, 102, 241, 0.12) !important;
+}
+
+/* Glass Cards */
+.card {
+    background: rgba(20, 24, 35, 0.65) !important;
+    backdrop-filter: blur(14px);
+    border-radius: 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    transition: all 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Sidebar */
+#layout-menu {
+    background: rgba(10, 12, 20, 0.85) !important;
+    backdrop-filter: blur(14px);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Active menu */
+.menu-item.active > .menu-link {
+    background: rgba(99, 102, 241, 0.12) !important;
+    color: #a5b4fc !important;
+}
+
+/* Navbar */
+.layout-navbar {
+    background: rgba(10, 12, 20, 0.75) !important;
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    border: none;
+    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(79, 70, 229, 0.45);
+}
+
+/* Inputs normal */
+.form-control {
+    background: rgba(15, 18, 28, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    color: #e5e7eb !important;
+}
+
+/* When typing (focus state) */
+.form-control:focus {
+    background: rgba(15, 18, 28, 0.9) !important;
+    color: #ffffff !important;
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25) !important;
+}
+
+/* Fix input-group icons background */
+.input-group-text {
+    background: rgba(15, 18, 28, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    color: #c7d2fe !important;
+}
+
+
+
+/* Date input text */
+input[type="date"] {
+    color: #e5e7eb !important;
+}
+
+/* Calendar icon (for Chrome/Edge) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(1.5);
+    cursor: pointer;
+}
+
+
+/* Remove bootstrap dark table color */
+.table-dark,
+.table-dark > :not(caption) > * > * {
+    background-color: transparent !important;
+    color: #e5e7eb !important;
+}
+
+/* Row styling */
+.table tbody tr {
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Hover */
+.table tbody tr:hover {
+    background: rgba(99, 102, 241, 0.08) !important;
+}
+
+/* Header */
+.table thead th {
+    background: transparent !important;
+    color: #c7d2fe !important;
+}
+
+/* Borders */
+.table td,
+.table th {
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.floating-ai {
+    max-height: 220px;
+    filter: drop-shadow(0 0 25px rgba(0,255,255,0.3));
+    animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.ai-hero-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(0,255,255,0.08);
+}
+
+
