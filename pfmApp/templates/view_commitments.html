@@ -18,7 +18,7 @@
                           <th>Title</th>
                         <th>Amount</th>
                         <th>Due date</th>
-                        <th>Is recurring</th>
+
                         <th>Note</th>
                         <th>Mark payment</th>
 
@@ -36,7 +36,7 @@
 
                               {% endif %}
                           </td>
-                          <td>{{i.is_recurring}}</td>
+
                           <td>{{i.note}}</td>
 
 
@@ -53,6 +53,20 @@
                           {% endif %}
 
 
+                          </td>
+
+
+                          <td >
+                              <div class="d-flex " style=" gap: 3px;">
+
+                                  <a href="{% url 'edit_commitment' i.id %}" class="btn btn-primary">Edit</a>
+                                 <form method="post" action="{% url 'delete_expense' i.id %}">
+                                     {% csrf_token %}
+                                  <button type="submit" class=" ms-3 btn btn-outline-danger " onclick="return confirm('Are you sure you want to delete this Income?')" >Delete</button>
+                                  </form>
+
+
+                              </div>
                           </td>
 
 

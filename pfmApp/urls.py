@@ -2,6 +2,7 @@ from django.urls import path
 from pfmApp import views
 
 urlpatterns=[
+    path('home/',views.home,name="home"),
     path("dashboard/",views.dashboard,name="dashboard"),
 
     path("user_registration_page/",views.user_registration_page,name="user_registration_page"),
@@ -30,6 +31,9 @@ urlpatterns=[
     path("add_commitment/",views.add_commitment,name="add_commitment"),
     path("save_commitment/",views.save_commitment,name="save_commitment"),
     path("view_commitment/",views.view_commitment,name="view_commitment"),
+    path("edit_commitment/<int:commitment_id>/",views.edit_commitment,name="edit_commitment"),
+    path("update_commitment/<int:commitment_id>/",views.update_commitment,name="update_commitment"),
+
 
 
     path("mark_commitment_paid/<int:commitment_id>/",views.mark_commitment_paid,name="mark_commitment_paid"),

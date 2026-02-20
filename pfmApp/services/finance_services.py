@@ -3,6 +3,8 @@ from pfmApp.models import IncomeDb, ExpenseDb, SavingsDb, CommitmentDb
 from django.utils.timezone import now
 from decimal import Decimal
 from django.db.models import Sum
+import calendar
+from datetime import date,timedelta
 import json
 def get_monthly_financial_summary(user, month=None, year=None):
     today = now()
@@ -125,6 +127,28 @@ def get_monthly_financial_summary(user, month=None, year=None):
     # Combine into readable paragraph
     detailed_guidance = " ".join(guidance_messages)
 
+
+    num_days = calendar.monthrange(year, month)[1]
+    daily_dates = [date(year, month, day) for day in range(1, num_days + 1)]
+
+    daily_income = []
+    daily_expense = []
+
+    cumulative_income = Decimal('0')
+    cumulative_expense = Decimal('0')
+
+    for day in daily_dates:
+        day_income = IncomeDb.objects.filter(user=user, date=day).aggregate(total=Sum('amount'))['total'] or Decimal(
+            '0')
+        day_expense = ExpenseDb.objects.filter(user=user, date=day).aggregate(total=Sum('amount'))['total'] or Decimal(
+            '0')
+        cumulative_income += day_income
+        cumulative_expense += day_expense
+
+        # append cumulative balance after each day
+        daily_income.append(float(cumulative_income))
+        daily_expense.append(float(cumulative_expense))
+
     #chart data
     savings_investments = monthly_investment
     savings_future = monthly_retirement
@@ -148,8 +172,18 @@ def get_monthly_financial_summary(user, month=None, year=None):
             "Investments":float(savings_investments),
             "Future_Freedom":float(savings_future),
             "Safety":float(savings_safety),
+        },
+
+        "time_series":{
+        "dates": [d.strftime("%d %b") for d in daily_dates],
+        "daily_income": daily_income,
+        "daily_expense": daily_expense
         }
     }
+
+
+
+
 
     return {
         "total_income": total_income,
@@ -171,79 +205,46 @@ def get_monthly_financial_summary(user, month=None, year=None):
         "wants_ratio": wants_ratio,
         "growth_ratio": growth_ratio,
         "savings_ratio": savings_ratio,
+        "daily_dates": [d.strftime("%d %b") for d in daily_dates],
+        "daily_income": daily_income,
+        "daily_expense": daily_expense
     }
 
 
 
 
+def get_upcoming_bills(user, days_ahead=7, limit=3):
+    today = now().date()
 
-   #  user = request.user
-   #  today = now()
-   #  current_month = today.month
-   #  current_year = today.year
-   #  current_month_name = today.strftime("%B")
-   #
-   #
-   #  # income total
-   #  result  = IncomeDb.objects.filter(
-   #      user=user,
-   #      date__month=current_month,
-   #      date__year=current_year,
-   #  ).aggregate(total = Sum('amount'))
-   #
-   #  total_income = result['total'] if result['total'] is not None else Decimal('0')
-   #
-   #
-   #  # expense total
-   #
-   #  result = ExpenseDb.objects.filter(user=user,date__month=current_month,date__year=current_year).aggregate(total=Sum("amount"))
-   #  total_expense = result['total'] if result['total'] is not None else Decimal("0")
-   #
-   #
-   # # savings total month
-   #  monthly_total_savings = SavingsDb.objects.filter(user=user,date__month = current_month,date__year = current_year ).aggregate(total=Sum("amount"))['total'] or Decimal('0')
-   #
-   #  cumulative_savings = SavingsDb.objects.filter(user=user).aggregate(total = Sum('amount'))['total'] or Decimal("0")
-   #
-   #
-   #
-   #  balance = total_income-total_expense-monthly_total_savings  # can be neg #show warning
-   #
-   #
-   #
-   #
-   #
-   #
-   #  # commitments_total
-   #
-   #  result = CommitmentDb.objects.filter(user=user,active=True).aggregate(total=Sum('amount'))
-   #  total_commitment = result['total'] if result['total'] is not None else Decimal('0')
-   #
-   #  remaining_commitments = Decimal('0')
-   #
-   #  for c in CommitmentDb.objects.filter(active=True,user=user):
-   #      if not c.is_paid_this_month():
-   #          remaining_commitments +=c.amount
-   #
-   #
-   #  spendable_amount = balance-remaining_commitments # can be neg # show warning
-   #
-   #
-   #  # safety,growth freedom fund
-   #
-   #  cumulative_safety = SavingsDb.objects.filter(user=user,category="safety").aggregate(total=Sum('amount'))['total'] or Decimal('0')
-   #
-   #  cumulative_freedom = SavingsDb.objects.filter(user=user, category="freedom").aggregate(total=Sum('amount'))[
-   #                          'total'] or Decimal('0')
-   #
-   #  cumulative_growth = ExpenseDb.objects.filter(user=user, category="Growth").aggregate(total=Sum('amount'))[
-   #                          'total'] or Decimal('0')
-   #
-   #
-   #  #monthly safety,growth freedom fund
-   #
-   #  monthly_safety = SavingsDb.objects.filter(user=user,category="safety",date__month=current_month,date__year=current_year).aggregate(total=Sum('amount'))['total'] or Decimal('0')
-   #
-   #  monthly_freedom = SavingsDb.objects.filter(user=user,category="freedom",date__month=current_month,date__year=current_year).aggregate(total=Sum('amount'))['total'] or Decimal('0')
-   #
-   #  monthly_growth = ExpenseDb.objects.filter(user=user,category="Growth",date__month=current_month,date__year=current_year).aggregate(total=Sum('amount'))['total'] or Decimal('0')
+    commitments = CommitmentDb.objects.filter(user=user, active=True)
+
+    upcoming_list = []
+
+    for c in commitments:
+        # Calculate the due date this month
+        try:
+            due_date_this_month = date(today.year, today.month, c.due_day)
+        except ValueError:
+            # For example, Feb 30 -> fallback to last day of month
+            import calendar
+            last_day = calendar.monthrange(today.year, today.month)[1]
+            due_date_this_month = date(today.year, today.month, last_day)
+
+        # Overdue first
+        if c.is_unpaid() and due_date_this_month < today:
+            upcoming_list.append((c, 'overdue'))
+        # Due within next 'days_ahead'
+        elif c.is_unpaid() and today <= due_date_this_month <= today + timedelta(days=days_ahead):
+            upcoming_list.append((c, 'upcoming'))
+
+    # Sort: overdue first, then by due date
+    upcoming_list.sort(key=lambda x: (x[1] != 'overdue', x[0].due_day))
+
+    # Return only the commitment objects
+    return [c for c, status in upcoming_list][:limit]
+
+
+
+# when the commitments added to the expnse it should not be editable or deletable, and the commiments details are editable
+
+

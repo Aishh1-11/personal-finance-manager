@@ -10,58 +10,13 @@
 </head>
 <body>
 
-<div class="col-xl">
-                  <div class="card mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                      <h5 class="mb-0">edit Income</h5>
-
-                    </div>
-                    <div class="card-body">
-                      <form method="POST" action="{% url 'update_commitment' commitment.id %}">
-                          {% csrf_token %}
-
-                        <div class="mb-3">
-                          <label class="form-label" for="amount">Amount</label>
-                          <input type="number" class="form-control" id="amount" value="{{commitment .amount}}" name="amount">
-                        </div>
-
-
-                        <div class="mb-3">
-                          <label class="form-label" for="date">Date</label>
-                   <input type="date" id="date" class="form-control" name="date" value="{{ income.date|date:'Y-m-d' }}">
-
-                        </div>
-
-                          <div class="mb-3">
-                          <label class="form-label" for="source">Source</label>
-                          <input type="text" id="source" class="form-control phone-mask" value="{{income.income_source}}" name="source">
-                        </div>
-
-                              <div class="mb-3">
-                          <label class="form-label" for="source">Note</label>
-                          <textarea rows="3" name="note"  class="form-control phone-mask" >{{income.note}}</textarea>
-                        </div>
-
-
-                        <button type="submit" class="btn btn-primary">update</button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-
-
-
-
-
-   <!-- Content -->
-
-            <div class="container-xxl flex-grow-1 container-p-y">
+<div class="container-xxl flex-grow-1 container-p-y">
 
 <div class="col-xl">
                   <div class="card mb-4">
   <div class="card-header d-flex justify-content-between align-items-center">
-    <h5 class="mb-0">Add Commitment</h5>
-    <small class="text-muted">Fixed payments like rent, EMI, subscriptions, fees</small>
+    <h5 class="mb-0">Edit Commitment</h5>
+
   </div>
 
   <div class="card-body">
@@ -69,14 +24,15 @@
         {% csrf_token %}
 
 
-      <div class="mb-3">
+   <div>
+          <div class="mb-3">
         <label class="form-label" for="title">Commitment Title</label>
         <input
           type="text"
           class="form-control"
           id="title"
           name="title"
-          value="{{commitment.title}}"
+          value = "{{commitment.title}}"
           required>
       </div>
 
@@ -88,8 +44,8 @@
           class="form-control"
           id="amount"
           name="amount"
-          value="{{commitment.amount}}"
-          min="1"
+          value = "{{commitment.amount}}"
+
           required>
       </div>
 
@@ -101,21 +57,12 @@
           class="form-control"
           id="due_day"
           name="due_day"
+          placeholder="1–31"
           value="{{commitment.due_day}}"
-          min="1"
-          max="31"
           required>
       </div>
 
-<!-- TODO: onetime commitment-->
-<!--      <div class="mb-3">-->
-<!--        <label class="form-label">Is this recurring?</label>-->
-<!--        <select class="form-control" name="is_recurring" required>-->
-<!--          <option {% if commitment.is_recurring  %} selected {% endif %} value="True">Yes, repeats every month</option>-->
 
-<!--          <option {% if not commitment.is_recurring %} selected {% endif %} value = "False">No, one-time only</option>-->
-<!--        </select>-->
-<!--      </div>-->
 
 
       <div class="mb-3">
@@ -125,11 +72,11 @@
           name="note"
           id="note"
           class="form-control"
-          value="{{commitment.note}}"
-          ></textarea>
+          >{{commitment.note}}</textarea>
       </div>
+   </div>
 
-      <button type="submit" class="btn btn-primary">update Commitment</button>
+      <button type="submit" class="btn btn-primary">Update Commitment</button>
     </form>
   </div>
 </div>
@@ -137,6 +84,11 @@
                 </div>
 
  </div>
+
+
+
+
+
 
 
 </body>

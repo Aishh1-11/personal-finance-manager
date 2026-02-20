@@ -107,7 +107,7 @@
                 </g>
               </svg>
             </span>
-            <span class="app-brand-text demo menu-text fw-bolder ms-2">Sneat</span>
+            <span class="app-brand-text demo menu-text fw-bolder ms-2">SPLIT</span>
           </a>
 
           <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -267,8 +267,8 @@
                           </div>
                         </div>
                         <div class="flex-grow-1">
-                          <span class="fw-semibold d-block">John Doe</span>
-                          <small class="text-muted">Admin</small>
+                          <span class="fw-semibold d-block">{{request.user.username}}</span>
+
                         </div>
                       </div>
                     </a>
@@ -282,21 +282,8 @@
                       <span class="align-middle">My Profile</span>
                     </a>
                   </li>
-                  <li>
-                    <a class="dropdown-item" href="#">
-                      <i class="bx bx-cog me-2"></i>
-                      <span class="align-middle">Settings</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#">
-                      <span class="d-flex align-items-center align-middle">
-                        <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
-                        <span class="flex-grow-1 align-middle">Billing</span>
-                        <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
-                      </span>
-                    </a>
-                  </li>
+
+
                   <li>
                     <div class="dropdown-divider"></div>
                   </li>
@@ -327,12 +314,13 @@
 
 
             <!--  row start-greeting -->
-        <div class="row gap-2">
+        <div class="row ">
 
   <!-- LEFT SECTION -->
-  <div class="col-lg-7 col-md-12 mb-4 order-0">
+  <div class="col-lg-6 col-md-12 mb-4 ms-lg-3">
 
-    <!-- Greeting Card -->
+    <div class="row ">
+        <!-- Greeting Card -->
     <div class="card ai-hero-card text-white mb-4">
       <div class="row align-items-center">
         <div class="col-md-8">
@@ -346,7 +334,7 @@
             </h6>
 
             {% if summary.spendable_amount > 0 %}
-            <span class="badge bg-success">
+            <span class="badge text-dark bg-success">
               Within Safe Spending Zone
             </span>
             {% else %}
@@ -364,123 +352,149 @@
         </div>
       </div>
     </div>
+    </div>
 
-    <!-- Income + Spendable Cards -->
-    <div class="row">
+      <div class="row">
 
-      <div class="row mb-4 gx-2">
+          <!-- Financial Analysis Premium Card -->
+<div class="card glass-card p-4 ms-lg-2" style="
+    background: rgba(15, 23, 42, 0.6); /* semi-transparent glass effect */
+    backdrop-filter: blur(12px);       /* frosted glass */
+    border: 1px solid rgba(255,255,255,0.15); /* subtle border */
+    border-radius: 20px;               /* rounded corners */
+    position: relative;
+">
 
-  <!-- Income -->
-  <div class="col-lg-6 col-md-6 col-6 d-flex">
-    <div class="card text-white w-100 h-100">
-      <div class="card-body d-flex flex-column justify-content-between">
+  <h5 class="fw-bold mb-4" style="
+      background: linear-gradient(135deg,#6366f1,#8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 1.25rem;
+  ">
+    🤖 Financial Health Analysis
+  </h5>
 
-        <div class="d-flex align-items-center justify-content-between">
-          <div><span class="fw-semibold d-block mb-1">Total Income</span></div>
-          <div>
-            <small class="text-success fw-semibold">
-              <i class="bx bx-up-arrow-alt"></i> {{current_month_name}}
-            </small>
-          </div>
-        </div>
-
-        <h3 class="card-title mb-0">{{summary.total_income}}</h3>
-
-      </div>
+  <!-- Needs -->
+  <div class="mb-3">
+    <div class="d-flex justify-content-between">
+      <span>🏠 Needs</span>
+      <strong>{{ summary.needs_ratio|floatformat:1 }}%</strong>
+    </div>
+    <div class="progress" style="height:6px; border-radius:3px; background: rgba(255,255,255,0.1);">
+      <div class="progress-bar" style="
+          width: {{ summary.needs_ratio }}%;
+          background: linear-gradient(90deg,#f87171,#ef4444);
+          border-radius:3px;
+      "></div>
     </div>
   </div>
 
-  <!-- Free to Spend -->
-  <div class="col-lg-6 col-md-6 col-6 d-flex">
-    <div class="card text-white w-100 h-100">
-      <div class="card-body d-flex flex-column justify-content-between">
-
-        <span class="d-block mb-1">Free to Spend amount</span>
-
-        {% if summary.spendable_amount <= 0 %}
-          <h3 class="text-danger fw-bold mb-0">{{summary.spendable_amount}}</h3>
-        {% else %}
-          <h3 class="text-success mb-0">{{summary.spendable_amount}}</h3>
-        {% endif %}
-
-      </div>
+  <!-- Wants -->
+  <div class="mb-3">
+    <div class="d-flex justify-content-between">
+      <span>🎯 Wants</span>
+      <strong>{{ summary.wants_ratio|floatformat:1 }}%</strong>
     </div>
+    <div class="progress" style="height:6px; border-radius:3px; background: rgba(255,255,255,0.1);">
+      <div class="progress-bar" style="
+          width: {{ summary.wants_ratio }}%;
+          background: linear-gradient(90deg,#facc15,#fbbf24);
+          border-radius:3px;
+      "></div>
+    </div>
+  </div>
+
+  <!-- Growth -->
+  <div class="mb-3">
+    <div class="d-flex justify-content-between">
+      <span>📈 Growth</span>
+      <strong>{{ summary.growth_ratio|floatformat:1 }}%</strong>
+    </div>
+    <div class="progress" style="height:6px; border-radius:3px; background: rgba(255,255,255,0.1);">
+      <div class="progress-bar" style="
+          width: {{ summary.growth_ratio }}%;
+          background: linear-gradient(90deg,#38bdf8,#0ea5e9);
+          border-radius:3px;
+      "></div>
+    </div>
+  </div>
+
+  <!-- Savings -->
+  <div class="mb-4">
+    <div class="d-flex justify-content-between">
+      <span>💎 Savings</span>
+      <strong>{{ summary.savings_ratio|floatformat:1 }}%</strong>
+    </div>
+    <div class="progress" style="height:6px; border-radius:3px; background: rgba(255,255,255,0.1);">
+      <div class="progress-bar" style="
+          width: {{ summary.savings_ratio }}%;
+          background: linear-gradient(90deg,#34d399,#10b981);
+          border-radius:3px;
+      "></div>
+    </div>
+  </div>
+
+  <hr style="border-color: rgba(255,255,255,0.1);" />
+
+  <div class="small text-muted" style="line-height:1.5;">
+    {{ summary.detailed_guidance }}
   </div>
 
 </div>
 
 
-    </div>
+
+      </div>
+
+
+
 
   </div>
 
   <!-- RIGHT SECTION -->
-  <div class="col-lg-4">
-    <div class="card shadow-lg border-0 p-4 glass-card">
+  <div class="col-lg-5 ms-lg-5 ">
 
-      <h5 class="fw-bold mb-3">
-        🤖 Financial Health Analysis
-      </h5>
+        <!-- Income vs Expense -->
+              <div class="col-lg-12 col-md-6 mb-4">
+                <div class="card  text-white ">
+                  <div class="card-body ">
+                    <h5 class="card-title text-primary">Income vs Expense</h5>
+                    <canvas id="incomeExpenseChart"></canvas>
+                  </div>
+                </div>
+              </div>
 
-      <!-- Needs -->
-      <div class="mb-3">
-        <div class="d-flex justify-content-between">
-          <span>🏠 Needs</span>
-          <strong>{{ summary.needs_ratio|floatformat:1 }}%</strong>
-        </div>
-        <div class="progress" style="height:6px;">
-          <div class="progress-bar bg-danger"
-               style="width: {{ summary.needs_ratio }}%;">
-          </div>
-        </div>
-      </div>
-
-      <!-- Wants -->
-      <div class="mb-3">
-        <div class="d-flex justify-content-between">
-          <span>🎯 Wants</span>
-          <strong>{{ summary.wants_ratio|floatformat:1 }}%</strong>
-        </div>
-        <div class="progress" style="height:6px;">
-          <div class="progress-bar bg-warning"
-               style="width: {{ summary.wants_ratio }}%;">
-          </div>
-        </div>
-      </div>
-
-      <!-- Growth -->
-      <div class="mb-3">
-        <div class="d-flex justify-content-between">
-          <span>📈 Growth</span>
-          <strong>{{ summary.growth_ratio|floatformat:1 }}%</strong>
-        </div>
-        <div class="progress" style="height:6px;">
-          <div class="progress-bar bg-info"
-               style="width: {{ summary.growth_ratio }}%;">
-          </div>
-        </div>
-      </div>
-
-      <!-- Savings -->
-      <div class="mb-4">
-        <div class="d-flex justify-content-between">
-          <span>💎 Savings</span>
-          <strong>{{ summary.savings_ratio|floatformat:1 }}%</strong>
-        </div>
-        <div class="progress" style="height:6px;">
-          <div class="progress-bar bg-success"
-               style="width: {{ summary.savings_ratio }}%;">
-          </div>
-        </div>
-      </div>
-
+      <div class="col-lg-12 col-md-6 col-12 mb-4">
+  <div class="card text-white bg-dark">
+    <div class="card-body">
+      <h5 class="card-title">Upcoming Bills</h5>
       <hr>
-
-      <div class="small text-muted">
-        {{ summary.detailed_guidance }}
-      </div>
-
+      {% if upcoming_bills %}
+        <ul class="list-group list-group-flush text-white">
+  {% for bill in upcoming_bills %}
+  <li class="list-group-item bg-dark d-flex justify-content-between align-items-center">
+    <div>
+      <strong>{{ bill.title }}</strong><br>
+      ₹{{ bill.amount }} | Due: {{ bill.due_day }} {{ current_month_name }}
     </div>
+    {% if bill.is_overdue %}
+      <span class="badge bg-danger">Overdue</span>
+    {% elif bill.is_unpaid %}
+      <span class="badge bg-warning text-dark">Unpaid</span>
+    {% else %}
+      <span class="badge bg-success">Paid</span>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+      {% else %}
+        <p class="text-muted">You don’t have any upcoming bills!</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+
   </div>
 
 </div>
@@ -492,24 +506,8 @@
 
 
 
-
-
-
-
-
-
-
-
 <div class="row">
-       <!-- Income vs Expense -->
-              <div class="col-lg-6 col-md-6 mb-4">
-                <div class="card  text-white ">
-                  <div class="card-body ">
-                    <h5 class="card-title text-primary">Income vs Expense</h5>
-                    <canvas id="incomeExpenseChart"></canvas>
-                  </div>
-                </div>
-              </div>
+
 </div>
 
 
@@ -521,7 +519,7 @@
 
             <!--  row start key-->
             <div class="row">
-              <small class="text-success fw-semibold"> {{current_month_name}}</small><br>
+              <small class="text-success card-title fw-semibold"> {{current_month_name}} Insights</small><br>
 
 
 
@@ -535,22 +533,13 @@
                         <img src="{% static 'pfm_admin/img/icons/unicons/paypal.png' %}" alt="Credit Card"
                           class="rounded" />
                       </div>
-                      <div class="dropdown">
-                        <button class="btn p-0" type="button" id="cardOpt4" data-bs-toggle="dropdown"
-                          aria-haspopup="true" aria-expanded="false">
-                          <i class="bx bx-dots-vertical-rounded"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt4">
-                          <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                          <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                        </div>
-                      </div>
+
                     </div>
                     <span class="d-block mb-1">Free to Spend amount</span>
                     {% if summary.spendable_amount <= 0 %} <h3 class="card-title text-nowrap mb-2 text-danger fw-bold">
                       {{summary.spendable_amount}}</h3>
                       {% else %}
-                      <h2 class="card-title text-nowrap mb-2 text-success">{{summary.spendable_amount}}</h2>
+                      <h2 class="card-title text-nowrap mb-2 text-success">{{summary.spendable_amount|floatformat:2}}</h2>
                       {% endif %}
 
                       <small class="text-danger fw-semibold"> </small>
@@ -573,22 +562,13 @@
                         <img src="{% static 'pfm_admin/img/icons/unicons/cc-primary.png' %}" alt="Credit Card"
                           class="rounded" />
                       </div>
-                      <div class="dropdown">
-                        <button class="btn p-0" type="button" id="cardOpt1" data-bs-toggle="dropdown"
-                          aria-haspopup="true" aria-expanded="false">
-                          <i class="bx bx-dots-vertical-rounded"></i>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="cardOpt1">
-                          <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                          <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                        </div>
-                      </div>
+
                     </div>
-                    <span class="fw-semibold d-block mb-1">Remaining commitments</span>
+                    <span class="fw-semibold d-block mb-1">Remaining Bills</span>
                     {% if remaining_commitments == 0 %}
-                    <h3 class="card-title mb-2 text-success">{{summary.remaining_commitments}}</h3>
+                    <h3 class="card-title mb-2 text-success">{{summary.remaining_commitments|floatformat:2}}</h3>
                     {% else %}
-                    <h3 class="card-title mb-2 text-danger">{{summary.remaining_commitments}}</h3>
+                    <h3 class="card-title mb-2 text-danger">{{summary.remaining_commitments|floatformat:2}}</h3>
                     {% endif %}
                     <small class="text-success fw-semibold"></small>
                   </div>
@@ -607,19 +587,10 @@
                         <img src="{% static 'pfm_admin/img/icons/unicons/chart-success.png' %}" alt="chart success"
                           class="rounded" />
                       </div>
-                      <div class="dropdown">
-                        <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown"
-                          aria-haspopup="true" aria-expanded="false">
-                          <i class="bx bx-dots-vertical-rounded"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                          <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                          <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                        </div>
-                      </div>
+
                     </div>
-                    <span class="fw-semibold d-block mb-1">Account Balance</span>
-                    <h3 class="card-title mb-2">{{summary.balance}}</h3>
+                    <span class="fw-semibold d-block mb-1">Net Balance</span>
+                    <h3 class="card-title mb-2">{{summary.balance|floatformat:2}}</h3>
 
                     <a href="{% url 'view_expense' %}"><small class="text-primary fw-semibold"></small></a>
                   </div>
@@ -630,7 +601,7 @@
               </div>
               <!--bal end-->
 
-              <!-- ex start-->
+              <!-- income start-->
               <div class="col-lg-3 col-md-6 col-6 mb-4">
                 <div class="card text-white">
                   <div class="card-body">
@@ -639,19 +610,10 @@
                         <img src="{% static 'pfm_admin/img/icons/unicons/chart-success.png' %}" alt="chart success"
                           class="rounded" />
                       </div>
-                      <div class="dropdown">
-                        <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown"
-                          aria-haspopup="true" aria-expanded="false">
-                          <i class="bx bx-dots-vertical-rounded"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                          <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                          <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                        </div>
-                      </div>
+
                     </div>
-                    <span class="fw-semibold d-block mb-1">Expense</span>
-                    <h3 class="card-title mb-2">{{summary.total_expense}}</h3>
+                    <span class="fw-semibold d-block mb-1">Net Income</span>
+                    <h3 class="card-title mb-2">{{summary.total_income|floatformat:2}}</h3>
 
                     <a href="{% url 'view_expense' %}"><small class="text-primary fw-semibold"></small></a>
                   </div>
@@ -660,7 +622,7 @@
 
 
               </div>
-              <!--expense end-->
+              <!--incom end-->
 
 
 
@@ -675,31 +637,18 @@
 
 
             <!--  row start - Future-->
+               <h5 class="card-title text-primary d-flex justify-content-between ">Wealth building</h5>
             <div class="row">
-              <h5 class="card-title text-primary">Secure Your Future</h5>
 
 
 
-              <!-- safety start-->
-              <div class="col-lg-4 col-md-12 col-12 mb-4">
+
+             <div class="col-lg-4 col-sm-12">
+                  <!-- safety start-->
+              <div class=" mb-4">
                 <div class="card text-white">
                   <div class="card-body">
-                    <div class="card-title d-flex align-items-start justify-content-between">
-                      <div class="avatar flex-shrink-0">
-                        <img src="{% static 'pfm_admin/img/icons/unicons/paypal.png' %}" alt="Credit Card"
-                          class="rounded" />
-                      </div>
-                      <div class="dropdown">
-                        <button class="btn p-0" type="button" id="cardOpt4" data-bs-toggle="dropdown"
-                          aria-haspopup="true" aria-expanded="false">
-                          <i class="bx bx-dots-vertical-rounded"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt4">
-                          <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                          <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                        </div>
-                      </div>
-                    </div>
+
                     <span class="d-block mb-1">Safety/Emergency</span>
 
                     <h4 class="card-title text-nowrap mb-2 text-success fw-bold">total invested -
@@ -720,25 +669,10 @@
 
 
               <!-- future freedom start-->
-              <div class="col-lg-4 col-md-12 col-12 mb-4">
+              <div class=" mb-4">
                 <div class="card  text-white">
                   <div class="card-body ">
-                    <div class="card-title d-flex align-items-start justify-content-between">
-                      <div class="avatar flex-shrink-0">
-                        <img src="{% static 'pfm_admin/img/icons/unicons/cc-primary.png' %}" alt="Credit Card"
-                          class="rounded" />
-                      </div>
-                      <div class="dropdown">
-                        <button class="btn p-0" type="button" id="cardOpt1" data-bs-toggle="dropdown"
-                          aria-haspopup="true" aria-expanded="false">
-                          <i class="bx bx-dots-vertical-rounded"></i>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="cardOpt1">
-                          <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                          <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                        </div>
-                      </div>
-                    </div>
+
                     <span class="d-block mb-1">Future Freedom</span>
 
                     <h4 class="card-title text-nowrap mb-2 text-success fw-bold">total invested -
@@ -753,25 +687,10 @@
 
 
               <!-- growth start-->
-              <div class="col-lg-4 col-md-12 col-12 mb-4">
+              <div class=" mb-4">
                 <div class="card  text-white">
                   <div class="card-body">
-                    <div class="card-title d-flex align-items-start justify-content-between">
-                      <div class="avatar flex-shrink-0">
-                        <img src="{% static 'pfm_admin/img/icons/unicons/chart-success.png' %}" alt="chart success"
-                          class="rounded" />
-                      </div>
-                      <div class="dropdown">
-                        <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown"
-                          aria-haspopup="true" aria-expanded="false">
-                          <i class="bx bx-dots-vertical-rounded"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                          <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                          <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                        </div>
-                      </div>
-                    </div>
+
                     <span class="d-block mb-1">Investment</span>
 
                     <h4 class="card-title text-nowrap mb-2 text-success fw-bold">total invested -
@@ -788,12 +707,31 @@
               </div>
               <!--growth end-->
 
+             </div>
+
+
+                  <!-- Savings Allocation -->
+              <div class="col-lg-4 ms-lg-5 col-md-12 mb-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title text-primary">Savings Allocation</h5>
+                    <canvas id="savingsChart"></canvas>
+                  </div>
+                </div>
+              </div>
+
+
 
 
 
 
             </div>
             <!--                row end-->
+
+
+
+
+              <hr>
 
 
 
@@ -819,15 +757,7 @@
 
 
 
-              <!-- Savings Allocation -->
-              <div class="col-lg-4 col-md-12 mb-4">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title text-primary">Savings Allocation</h5>
-                    <canvas id="savingsChart"></canvas>
-                  </div>
-                </div>
-              </div>
+
 
             </div>
 
@@ -910,92 +840,123 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-  <script>
+<script>
+
+
     const data = JSON.parse('{{ chart_data|escapejs }}');
 
-    /* Income vs Expense */
-    new Chart(document.getElementById('incomeExpenseChart'), {
-      type: 'bar',
-      data: {
-        labels: ['Income', 'Expense'],
-        datasets: [{
-          data: [
-            {{ summary.total_income | floatformat:"2"}},
-        data.outer.Expense
+new Chart(document.getElementById('incomeExpenseChart'), {
+  type: 'line',
+  data: {
+    labels: data.time_series.dates,      // X-axis: dates
+    datasets: [
+      {
+        label: 'Income',
+        data: data.time_series.daily_income,
+        borderColor: '#5e5cff',
+        backgroundColor: 'rgba(94,92,255,0.2)',
+        borderWidth: 4,
+        tension: 0.4,
+        fill: true
+      },
+      {
+        label: 'Expense',
+        data: data.time_series.daily_expense,
+        borderColor: '#8a85ff',
+        backgroundColor: 'rgba(138,133,255,0.2)',
+        borderWidth: 4,
+        tension: 0.4,
+        fill: true
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top', labels: { color: '#fff', font: { weight: 'bold' } } }
+    },
+    scales: {
+      x: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+      y: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+    }
+  }
+});
+
+
+
+
+  /* ==========================
+     Expense Distribution Chart (Premium Monochrome)
+  ========================== */
+  new Chart(document.getElementById('expenseChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Needs', 'Wants', 'Growth'],
+      datasets: [{
+        data: [
+          data.expense_inner.Needs,
+          data.expense_inner.Wants,
+          data.expense_inner.Growth
         ],
-        backgroundColor: '#696cff'
+        backgroundColor: [
+          '#696cff',  // deep purple
+          '#8183ff',  // lighter tone
+          '#999cff'   // softest tone
+        ],
+        borderWidth: 0
       }]
     },
-      options: {
-      plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true } }
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#fff' } },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.label + ': ' + context.raw + '%';
+            }
+          }
+        }
+      }
     }
-      });
+  });
 
-
-    /* Expense Distribution */
-    new Chart(document.getElementById('expenseChart'), {
-      type: 'doughnut',
-      data: {
-        labels: ['Needs', 'Wants', 'Growth'],
-        datasets: [{
-          data: [
-            data.expense_inner.Needs,
-            data.expense_inner.Wants,
-            data.expense_inner.Growth
-          ],
-          backgroundColor: [
-            'rgba(105,108,255,0.9)',
-            'rgba(105,108,255,0.7)',
-            'rgba(105,108,255,0.5)'
-          ]
-        }]
-      },
-      options: {
-        plugins: { legend: { position: 'bottom' } }
+  /* ==========================
+     Savings Allocation Chart (Premium Monochrome)
+  ========================== */
+  new Chart(document.getElementById('savingsChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Investments', 'Future Freedom', 'Safety'],
+      datasets: [{
+        data: [
+          data.savings_inner.Investments,
+          data.savings_inner.Future_Freedom,
+          data.savings_inner.Safety
+        ],
+        backgroundColor: [
+          '#696cff',  // deep purple
+          '#8183ff',
+          '#999cff'
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#fff' } },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.label + ': ' + context.raw + '%';
+            }
+          }
+        }
       }
-    });
-
-
-    /* Savings Allocation */
-    new Chart(document.getElementById('savingsChart'), {
-      type: 'doughnut',
-      data: {
-        labels: ['Investment', 'Future Freedom', 'Safety'],
-        datasets: [{
-          data: [
-            data.savings_inner.Investments,
-            data.savings_inner.Future_Freedom,
-            data.savings_inner.Safety
-          ],
-          backgroundColor: [
-            'rgba(105,108,255,0.9)',
-            'rgba(105,108,255,0.7)',
-            'rgba(105,108,255,0.5)'
-          ]
-        }]
-      },
-      options: {
-        plugins: { legend: { position: 'bottom' } }
-      }
-    });
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    }
+  });
+</script>
 
 
 

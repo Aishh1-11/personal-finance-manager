@@ -24,7 +24,8 @@
         {% csrf_token %}
 
 
-      <div class="mb-3">
+    <div>
+          <div class="mb-3">
         <label class="form-label" for="title">Commitment Title</label>
         <input
           type="text"
@@ -62,16 +63,7 @@
           required>
       </div>
 
-<!--  TODO onetime commitments-->
 
-<!--      <div class="mb-3">-->
-<!--        <label class="form-label">Is this recurring?</label>-->
-<!--        <select class="form-control" name="is_recurring" required>-->
-<!--          <option disabled selected>Select option</option>-->
-<!--          <option value="True">Yes, repeats every month</option>-->
-<!--          <option value="False">No, one-time only</option>-->
-<!--        </select>-->
-<!--      </div>-->
 
 
       <div class="mb-3">
@@ -84,6 +76,7 @@
           placeholder="Any extra details..."></textarea>
       </div>
 
+    </div>
       <button type="submit" class="btn btn-primary">Save Commitment</button>
     </form>
   </div>

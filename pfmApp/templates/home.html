@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Finance Manager | Home</title>
+
+<link rel="icon" href="{% static 'pfm_admin/img/favicon/favicon.ico' %}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'times-new-roman',sans-serif;}
+body{background:linear-gradient(135deg,#0f172a,#020617);color:white;line-height:1.6;}
+a{text-decoration:none;color:#818cf8;}
+a:hover{text-decoration:underline;}
+.container{width:90%;max-width:1200px;margin:0 auto;padding:60px 0;}
+nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:60px;}
+nav h1{font-size:28px;color:#6366f1;}
+nav ul{display:flex;list-style:none;gap:20px;}
+nav ul li a{font-weight:500;transition:0.3s;}
+nav ul li a:hover{color:#8b5cf6;}
+
+/* Hero Section */
+.hero{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:60px;}
+.hero-text{flex:1;min-width:300px;margin-right:30px;}
+.hero-text h2{font-size:48px;color:#6366f1;margin-bottom:20px;}
+.hero-text p{font-size:18px;color:#cbd5e1;margin-bottom:30px;}
+.hero-text a{display:inline-block;padding:12px 25px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:10px;font-weight:600;color:white;transition:0.3s;}
+.hero-text a:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(99,102,241,0.4);}
+.hero-image{flex:1;min-width:300px;text-align:center;}
+.hero-image img{width:80%;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+
+/* Features Section */
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:30px;margin-bottom:60px;}
+.feature-card{background:rgba(15,23,42,0.85);padding:30px;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,0.6);transition:0.3s;}
+.feature-card:hover{transform:translateY(-5px);}
+.feature-card i{font-size:40px;color:#6366f1;margin-bottom:15px;display:block;}
+.feature-card h3{font-size:22px;margin-bottom:10px;color:#8b5cf6;}
+.feature-card p{color:#cbd5e1;font-size:15px;}
+
+/* Footer */
+footer{text-align:center;padding:40px 0;background:rgba(0,0,0,0.6);border-top:1px solid rgba(255,255,255,0.1);}
+footer p{color:#94a3b8;}
+footer a{color:#6366f1;font-weight:500;}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<div class="container">
+<nav>
+    <h1>PFM</h1>
+    <ul>
+        <li><a href="#features">Features</a></li>
+        <li><a href="{% url 'user_login' %}">Login</a></li>
+        <li><a href="{% url 'user_registration_page' %}">Register</a></li>
+    </ul>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-text">
+        <h2>Your Personal Finance Partner</h2>
+        <p>Track your monthly income, expenses, and savings effortlessly. Plan smartly for the future, invest in growth, and achieve financial security. Beginner-friendly and visually clear for quick insights.</p>
+        <a href="{% url 'user_registration_page' %}">Get Started</a>
+    </div>
+    <div class="hero-image">
+        <img src="{% static 'pfm_admin/img/illustrations/finance-dashboard.png' %}" alt="Finance Dashboard">
+    </div>
+</section>
+
+<!-- Features Section -->
+<!-- Features Section -->
+<section id="features" class="features">
+    <div class="feature-card">
+        <i class='bx bx-bar-chart-alt-2'></i>
+        <h3>Quick Finance Overview</h3>
+        <p>Visualize your total income, net balance, and monthly expenses in one glance with clear charts.</p>
+    </div>
+    <div class="feature-card">
+        <i class='bx bx-wallet'></i>
+        <h3>Smart Spending Guidance</h3>
+        <p>Get actionable insights on essentials, discretionary, and growth spending. Know what’s healthy and what needs attention.</p>
+    </div>
+    <div class="feature-card">
+        <i class='bx bx-line-chart'></i>
+        <h3>Track Your Investments</h3>
+        <p>Monitor savings in categories like Safety, Future Freedom, and Growth. Withdrawals are tracked to keep your net invested amount clear.</p>
+    </div>
+    <div class="feature-card">
+        <i class='bx bx-user-check'></i>
+        <h3>Beginner-Friendly</h3>
+        <p>Simple interface and easy-to-understand charts for anyone, regardless of prior financial knowledge.</p>
+    </div>
+    <div class="feature-card">
+        <i class='bx bx-receipt'></i>
+        <h3>Manage Bills & Commitments</h3>
+        <p>Track recurring obligations and your free-to-spend amount so overspending is never a surprise.</p>
+    </div>
+    <div class="feature-card">
+        <i class='bx bx-time-five'></i>
+        <h3>Long-Term Awareness</h3>
+        <p>Build a clear picture of your finances over time. Know exactly how much you’ve invested, saved, and spent — for smarter decisions.</p>
+    </div>
+    <div class="feature-card">
+        <i class='bx bx-category'></i>
+        <h3>Smart Money Categorization</h3>
+        <p>Add and track income, expenses, and savings easily using simple categories. No need to enter every item individually — just pick categories like Needs, Wants, Growth, or Safety, and follow them consistently.</p>
+    </div>
+</section>
+
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 Personal Finance Manager. Designed to make finance simple & smart. <a href="{% url 'user_login' %}">Login</a> | <a href="{% url 'user_registration_page' %}">Register</a></p>
+</footer>
+
+</body>
+</html>

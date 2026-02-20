@@ -47,12 +47,13 @@
 
                           <td >
                               <div class="d-flex " style=" gap: 3px;">
-
+                                 {% if i.category != "commitment" %}
                                   <a href="{% url 'edit_expense' i.id %}" class="btn btn-primary">Edit</a>
                                   <form method="post" action="{% url 'delete_expense' i.id %}">
                                      {% csrf_token %}
                                   <button type="submit" class=" ms-3 btn btn-outline-danger " onclick="return confirm('Are you sure you want to delete this Income?')" >Delete</button>
                                   </form>
+                                  {% endif %}
 
                               </div>
                           </td>

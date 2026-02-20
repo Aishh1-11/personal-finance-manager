@@ -6,23 +6,32 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from datetime import date
 from django.db.models import Sum
-from django.utils.timezone import now
+from django.utils import timezone
 from decimal import Decimal
-from pfmApp.services.finance_services import get_monthly_financial_summary
+from pfmApp.services.finance_services import *
 import json
+from django.db.models import Case, When, Value, IntegerField
 
 # Create your views here.
 def dashboard(request):
     summary = get_monthly_financial_summary(request.user)
+    upcoming_bills = get_upcoming_bills(request.user)
 
 
     context = {
         "summary": summary,
         "chart_data": json.dumps(summary["chart_data"]),
         "current_month_name": now().strftime("%B"),
+        "upcoming_bills":upcoming_bills
+
     }
 
     return render(request, "dashboard.html", context)
+
+
+def home(request):
+
+    return render(request, "home.html")
 
 
 
@@ -225,7 +234,21 @@ def save_commitment(request):
 
 def view_commitment(request):
     commitments = CommitmentDb.objects.filter(user=request.user)
-    return render(request,"view_commitments.html",{"commitments":commitments})
+
+
+    overdue = [c for c in commitments if c.is_overdue()]
+
+
+    unpaid = [c for c in commitments if c.is_unpaid() and not c.is_overdue()]
+
+    paid = [c for c in commitments if c.is_paid_this_month()]
+
+
+    commitments = overdue + unpaid + paid
+
+
+
+    return render(request, "view_commitments.html", {"commitments": commitments})
 
 
 
@@ -241,6 +264,34 @@ def mark_commitment_paid(request,commitment_id):
 
 
     return redirect("view_commitment")
+
+def edit_commitment(request,commitment_id):
+    commitment =get_object_or_404(CommitmentDb,id=commitment_id,user=request.user)
+
+    return render(request,"edit_commitment.html",{"commitment":commitment})
+
+def update_commitment(request,commitment_id):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        amount = request.POST.get("amount")
+        due = request.POST.get("due_day")
+        note = request.POST.get("note")
+
+
+        CommitmentDb.objects.filter(id=commitment_id).update(title=title,amount=amount,due_day=due,note=note)
+
+    return redirect("view_commitment")
+
+def delete_commitment(request, commitment_id):
+
+    if request.method == "POST":
+
+        commitment = get_object_or_404(CommitmentDb,id=commitment_id,user=request.user)
+        commitment.delete()
+        return redirect("view_commitment")
+    return redirect("view_commitment")
+
+
 
 
 

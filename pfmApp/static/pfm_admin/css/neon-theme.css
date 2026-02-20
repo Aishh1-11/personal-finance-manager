@@ -141,4 +141,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     box-shadow: 0 0 40px rgba(0,255,255,0.08);
 }
 
+.container-xxl {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
 
