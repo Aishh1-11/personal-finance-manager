@@ -246,7 +246,7 @@
 
 
             <ul class="navbar-nav flex-row align-items-center ms-auto">
-              <!-- Place this tag where you want the button to render. -->
+
 
 
               <!-- User -->
@@ -357,81 +357,64 @@
       <div class="row">
 
           <!-- Financial Analysis Premium Card -->
-<div class="card glass-card p-4 ms-lg-2" style="
-    background: rgba(15, 23, 42, 0.6); /* semi-transparent glass effect */
-    backdrop-filter: blur(12px);       /* frosted glass */
-    border: 1px solid rgba(255,255,255,0.15); /* subtle border */
-    border-radius: 20px;               /* rounded corners */
-    position: relative;
-">
+<div class="card glass-card p-4 ms-lg-2" >
 
-  <h5 class="fw-bold mb-4" style="
-      background: linear-gradient(135deg,#6366f1,#8b5cf6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-size: 1.25rem;
-  ">
-    🤖 Financial Health Analysis
+  <h5 class="fw-bold mb-4" style="">
+     Financial Health Analysis
   </h5>
 
   <!-- Needs -->
   <div class="mb-3">
     <div class="d-flex justify-content-between">
-      <span>🏠 Needs</span>
+      <span> Needs</span>
       <strong>{{ summary.needs_ratio|floatformat:1 }}%</strong>
     </div>
-    <div class="progress" style="height:6px; border-radius:3px; background: rgba(255,255,255,0.1);">
-      <div class="progress-bar" style="
-          width: {{ summary.needs_ratio }}%;
-          background: linear-gradient(90deg,#f87171,#ef4444);
-          border-radius:3px;
-      "></div>
-    </div>
+   <div class="progress progress-container">
+  <div class="progress-bar progress-needs"
+       style="width: {{ summary.needs_ratio }}%;">
+  </div>
+</div>
   </div>
 
   <!-- Wants -->
   <div class="mb-3">
     <div class="d-flex justify-content-between">
-      <span>🎯 Wants</span>
+      <span> Wants</span>
       <strong>{{ summary.wants_ratio|floatformat:1 }}%</strong>
     </div>
-    <div class="progress" style="height:6px; border-radius:3px; background: rgba(255,255,255,0.1);">
-      <div class="progress-bar" style="
-          width: {{ summary.wants_ratio }}%;
-          background: linear-gradient(90deg,#facc15,#fbbf24);
-          border-radius:3px;
-      "></div>
-    </div>
+      <div class="progress progress-container">
+  <div class="progress-bar progress-wants"
+       style="width: {{ summary.wants_ratio }}%;">
+  </div>
+</div>
+
   </div>
 
   <!-- Growth -->
   <div class="mb-3">
     <div class="d-flex justify-content-between">
-      <span>📈 Growth</span>
+      <span> Growth</span>
       <strong>{{ summary.growth_ratio|floatformat:1 }}%</strong>
     </div>
-    <div class="progress" style="height:6px; border-radius:3px; background: rgba(255,255,255,0.1);">
-      <div class="progress-bar" style="
-          width: {{ summary.growth_ratio }}%;
-          background: linear-gradient(90deg,#38bdf8,#0ea5e9);
-          border-radius:3px;
-      "></div>
-    </div>
+    <div class="progress progress-container">
+  <div class="progress-bar progress-needs"
+       style="width: {{ summary.growth_ratio }}%;">
+  </div>
+</div>
   </div>
 
   <!-- Savings -->
   <div class="mb-4">
     <div class="d-flex justify-content-between">
-      <span>💎 Savings</span>
+      <span> Savings</span>
       <strong>{{ summary.savings_ratio|floatformat:1 }}%</strong>
     </div>
-    <div class="progress" style="height:6px; border-radius:3px; background: rgba(255,255,255,0.1);">
-      <div class="progress-bar" style="
-          width: {{ summary.savings_ratio }}%;
-          background: linear-gradient(90deg,#34d399,#10b981);
-          border-radius:3px;
-      "></div>
-    </div>
+      <div class="progress progress-container">
+  <div class="progress-bar progress-needs"
+       style="width: {{ summary.savings_ratio }}%;">
+  </div>
+</div>
+
   </div>
 
   <hr style="border-color: rgba(255,255,255,0.1);" />
@@ -458,7 +441,7 @@
               <div class="col-lg-12 col-md-6 mb-4">
                 <div class="card  text-white ">
                   <div class="card-body ">
-                    <h5 class="card-title text-primary">Income vs Expense</h5>
+                    <h5 class="card-title text-primary"> Your Income </h5>
                     <canvas id="incomeExpenseChart"></canvas>
                   </div>
                 </div>
@@ -471,15 +454,15 @@
       <hr>
       {% if upcoming_bills %}
         <ul class="list-group list-group-flush text-white">
-  {% for bill in upcoming_bills %}
+  {% for b in upcoming_bills %}
   <li class="list-group-item bg-dark d-flex justify-content-between align-items-center">
     <div>
-      <strong>{{ bill.title }}</strong><br>
-      ₹{{ bill.amount }} | Due: {{ bill.due_day }} {{ current_month_name }}
+      <strong>{{ b.title }}</strong><br>
+      ₹{{ b.amount }} | Due: {{ b.due_day }} {{ current_month_name }}
     </div>
-    {% if bill.is_overdue %}
+    {% if b.is_overdue %}
       <span class="badge bg-danger">Overdue</span>
-    {% elif bill.is_unpaid %}
+    {% elif b.is_unpaid %}
       <span class="badge bg-warning text-dark">Unpaid</span>
     {% else %}
       <span class="badge bg-success">Paid</span>
@@ -637,13 +620,13 @@
 
 
             <!--  row start - Future-->
-               <h5 class="card-title text-primary d-flex justify-content-between ">Wealth building</h5>
+               <h5 class="card-title text-primary d-flex  ">Wealth building</h5>
             <div class="row">
 
 
 
 
-             <div class="col-lg-4 col-sm-12">
+             <div class="col-lg-3 col-sm-12">
                   <!-- safety start-->
               <div class=" mb-4">
                 <div class="card text-white">
@@ -721,6 +704,18 @@
               </div>
 
 
+                  <!-- Expense Distribution -->
+              <div class="col-lg-4 col-md-12 mb-4 ms-5">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title text-primary">Expense Distribution</h5>
+                    <canvas id="expenseChart"></canvas>
+                  </div>
+                </div>
+              </div>
+
+
+
 
 
 
@@ -731,7 +726,7 @@
 
 
 
-              <hr>
+
 
 
 
@@ -742,15 +737,6 @@
 
 
 
-              <!-- Expense Distribution -->
-              <div class="col-lg-4 col-md-12 mb-4">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title text-primary">Expense Distribution</h5>
-                    <canvas id="expenseChart"></canvas>
-                  </div>
-                </div>
-              </div>
 
 
 
@@ -841,43 +827,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 <script>
-
-
     const data = JSON.parse('{{ chart_data|escapejs }}');
+
+
 
 new Chart(document.getElementById('incomeExpenseChart'), {
   type: 'line',
   data: {
-    labels: data.time_series.dates,      // X-axis: dates
-    datasets: [
-      {
-        label: 'Income',
-        data: data.time_series.daily_income,
-        borderColor: '#5e5cff',
-        backgroundColor: 'rgba(94,92,255,0.2)',
-        borderWidth: 4,
-        tension: 0.4,
-        fill: true
-      },
-      {
-        label: 'Expense',
-        data: data.time_series.daily_expense,
-        borderColor: '#8a85ff',
-        backgroundColor: 'rgba(138,133,255,0.2)',
-        borderWidth: 4,
-        tension: 0.4,
-        fill: true
-      }
-    ]
+    labels: data.time_series.dates,
+    datasets: [{
+      label: 'Monthly Income',
+      data: data.time_series.daily_income,
+      borderColor: '#5e5cff',
+      backgroundColor: 'rgba(94,92,255,0.2)',
+      borderWidth: 2,
+      tension: 0.4,
+      fill: true
+    }]
   },
   options: {
     responsive: true,
-    plugins: {
-      legend: { position: 'top', labels: { color: '#fff', font: { weight: 'bold' } } }
-    },
     scales: {
-      x: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-      y: { ticks: { color: '#ccc' }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+      y: { beginAtZero: true }
     }
   }
 });
@@ -885,23 +856,25 @@ new Chart(document.getElementById('incomeExpenseChart'), {
 
 
 
-  /* ==========================
-     Expense Distribution Chart (Premium Monochrome)
-  ========================== */
+
+// #xpense distribution
   new Chart(document.getElementById('expenseChart'), {
     type: 'doughnut',
     data: {
-      labels: ['Needs', 'Wants', 'Growth'],
+      labels: ['Needs', 'Wants', 'Growth','Commitments'],
       datasets: [{
         data: [
           data.expense_inner.Needs,
           data.expense_inner.Wants,
-          data.expense_inner.Growth
+          data.expense_inner.Growth,
+          data.expense_inner.Commitments,
         ],
         backgroundColor: [
-          '#696cff',  // deep purple
-          '#8183ff',  // lighter tone
-          '#999cff'   // softest tone
+          '#696cff',
+          '#8183ff',
+          '#999cff' ,
+          '#a6a9ff'
+
         ],
         borderWidth: 0
       }]
@@ -913,7 +886,7 @@ new Chart(document.getElementById('incomeExpenseChart'), {
         tooltip: {
           callbacks: {
             label: function(context) {
-              return context.label + ': ' + context.raw + '%';
+              return context.label + ': ₹' + context.parsed ;
             }
           }
         }
@@ -921,9 +894,8 @@ new Chart(document.getElementById('incomeExpenseChart'), {
     }
   });
 
-  /* ==========================
-     Savings Allocation Chart (Premium Monochrome)
-  ========================== */
+//  savings
+
   new Chart(document.getElementById('savingsChart'), {
     type: 'doughnut',
     data: {
@@ -935,7 +907,7 @@ new Chart(document.getElementById('incomeExpenseChart'), {
           data.savings_inner.Safety
         ],
         backgroundColor: [
-          '#696cff',  // deep purple
+          '#696cff',  
           '#8183ff',
           '#999cff'
         ],
@@ -949,7 +921,7 @@ new Chart(document.getElementById('incomeExpenseChart'), {
         tooltip: {
           callbacks: {
             label: function(context) {
-              return context.label + ': ' + context.raw + '%';
+              return context.label + ': ' ;
             }
           }
         }

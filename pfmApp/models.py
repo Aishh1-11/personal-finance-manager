@@ -1,8 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.db import transaction
+
+from datetime import date, timedelta
+import calendar
+from django.utils.timezone import now
+
 
 
 # Create your models here.
@@ -82,6 +86,21 @@ class CommitmentDb(models.Model):
             ExpenseDb.objects.create(user=self.user,expense_title=self.title,amount=self.amount,date=self.last_paid_date,category="commitment")
 
         return True
+
+    def is_upcoming(self, days_ahead=7):
+        today = now().date()
+        end_date = today + timedelta(days=days_ahead)
+
+        try:
+            due_date = date(today.year, today.month, self.due_day)
+        except ValueError:
+            last_day = calendar.monthrange(today.year, today.month)[1]
+            due_date = date(today.year, today.month, last_day)
+
+        if not self.is_unpaid():
+            return False
+
+        return due_date <= end_date and self.is_unpaid()
 
 
 class SavingsDb(models.Model):

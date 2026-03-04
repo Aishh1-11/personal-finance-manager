@@ -5,9 +5,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bud</title>
+    <title>Budget</title>
 </head>
 <body>
+
+
+<div class="container p-5">
+    <h1>Plan Your month </h1>
+    <hr>
+    <h2> Financial Snapshot</h2>
+<div>
+    <p><strong>Income:</strong> ₹{{ total_income }}</p>
+    <p><strong>Bills:</strong> ₹{{ total_bills }}</p>
+    <p><strong>Balance:</strong> ₹{{ balance }}</p>
+</div>
+
+<hr>
+
+<h2> Allocation</h2>
+<form method="POST">
+    {% csrf_token %}
+
+    <h4>Expenses</h4>
+    Needs: <input type="number" name="needs" value="{{ allocation.needs }}"><br>
+    Wants: <input type="number" name="wants" value="{{ allocation.wants }}"><br>
+    Growth: <input type="number" name="growth" value="{{ allocation.growth }}"><br>
+
+    <h4>Savings</h4>
+    Safety: <input type="number" name="safety" value="{{ allocation.safety }}"><br>
+    Future Freedom: <input type="number" name="futurefreedom" value="{{ allocation.futurefreedom }}"><br>
+    Investment: <input type="number" name="investment" value="{{ allocation.investment }}"><br><br>
+
+    <button type="submit">Save Allocation</button>
+</form>
+
+<hr>
+
+<h2> Progress</h2>
+
+{% for key, value in progress.items %}
+    <p>{{ key|title }} - {{ value }}%</p>
+    <div style="width:300px; background:#ddd;">
+        <div style="width:{{ value }}%; background:
+            {% if value > 100 %}red
+            {% elif value > 80 %}orange
+            {% else %}green
+            {% endif %};
+            height:20px;">
+        </div>
+    </div>
+    <br>
+{% endfor %}
+
+</div>
 
 
 

@@ -13,9 +13,11 @@ import json
 from django.db.models import Case, When, Value, IntegerField
 
 # Create your views here.
+
+current_date = date.today()
 def dashboard(request):
     summary = get_monthly_financial_summary(request.user)
-    upcoming_bills = get_upcoming_bills(request.user)
+    upcoming_bills = upcoming_commitment(request.user)
 
 
     context = {
@@ -125,7 +127,7 @@ def save_income(request):
     return redirect('view_income')
 @login_required
 def view_income(request):
-    income = IncomeDb.objects.filter(user=request.user)
+    income = IncomeDb.objects.filter(user=request.user,date__month = current_date.month,date__year = current_date.year)
 
     return render(request,"view_income.html",{"income":income})
 
@@ -183,7 +185,7 @@ def save_expense(request):
 @login_required
 def view_expense(request):
 
-    expense = ExpenseDb.objects.filter(user=request.user)
+    expense = ExpenseDb.objects.filter(user=request.user,date__month = current_date.month,date__year = current_date.year)
     return render(request,"view_expense.html",{"expense":expense})
 
 def edit_expense(request,expense_id):
@@ -317,7 +319,7 @@ def save_savings(request):
 
 def view_savings(request):
 
-    savings = SavingsDb.objects.filter(user=request.user)
+    savings = SavingsDb.objects.filter(user=request.user,date__month = current_date.month,date__year = current_date.year)
     return render(request,"view_savings.html",{"savings":savings})
 
 def edit_savings(request, saving_id):
@@ -373,6 +375,13 @@ def save_withdrawal(request):
         return redirect('view_savings')
 
     return redirect("view_savings")
+
+# ***************************************************
+
+
+def budget_page(request):
+
+    return render(request,"budget.html")
 
 
 

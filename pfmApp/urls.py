@@ -49,6 +49,8 @@ urlpatterns=[
     path("withdraw_savings/", views.withdraw_savings_page, name="withdraw_savings"),
     path("save_withdrawal/", views.save_withdrawal, name="save_withdrawal"),
 
+    path("budget/",views.budget_page, name="budget"),
+
 
 
 
