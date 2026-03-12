@@ -1,3 +1,4 @@
+from unicodedata import category
 
 from pfmApp.models import IncomeDb, ExpenseDb, SavingsDb, CommitmentDb
 from django.utils.timezone import now
@@ -61,8 +62,8 @@ def get_monthly_financial_summary(user, month=None, year=None):
         user=user, category='growth', date__month=month, date__year=year
     ).aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
-    expense_commitments = ExpenseDb.objects.filter(user = user,date__year = year, date__month = month).aggregate(total = Sum('amount'))['total'] or Decimal('0')
-    total_commitments = expense_commitments
+    expense_commitments = ExpenseDb.objects.filter(user = user,category="commitment",date__year = year, date__month = month).aggregate(total = Sum('amount'))['total'] or Decimal('0')
+
 
 
 
@@ -90,6 +91,7 @@ def get_monthly_financial_summary(user, month=None, year=None):
         savings_ratio = (monthly_total_savings / income) * Decimal('100')
 
         balance_ratio = (balance / income) * Decimal('100')
+        spendable_ratio = (spendable_amount / income) * Decimal('100')
         commitment_ratio = (expense_commitments / income) * Decimal('100')
     else:
         needs_ratio = wants_ratio = growth_ratio = savings_ratio = balance_ratio = commitment_ratio = Decimal('0')
@@ -104,11 +106,11 @@ def get_monthly_financial_summary(user, month=None, year=None):
         guidance_messages.append(
             "⚠️ You Does not have enough spendable amount. "
         )
-    elif balance_ratio < Decimal('10'):
+    elif spendable_ratio < Decimal('10'):
         guidance_messages.append(
             "Your remaining balance is very low. Avoid additional discretionary expenses."
         )
-    elif balance_ratio > Decimal('30'):
+    elif spendable_ratio > Decimal('30'):
         guidance_messages.append(
             "You have healthy leftover balance. Consider increasing savings or investing."
         )
@@ -247,7 +249,7 @@ def get_monthly_financial_summary(user, month=None, year=None):
         "total_income": total_income,
         "total_expense": total_expense,
         "balance": balance,
-        "total_commitments": total_commitments,
+
         "remaining_commitments": remaining_commitments,
         "spendable_amount": spendable_amount,
         "cumulative_safety": cumulative_safety,

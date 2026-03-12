@@ -7,6 +7,7 @@ __pycache__/
 
 # environment secrets
 .env
+credentials/
 
 # IDE files
 .idea/

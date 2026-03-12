@@ -921,7 +921,9 @@ new Chart(document.getElementById('incomeExpenseChart'), {
         tooltip: {
           callbacks: {
             label: function(context) {
-              return context.label + ': ' ;
+
+                return context.label + ': ₹' + context.parsed ;
+
             }
           }
         }
