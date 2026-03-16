@@ -51,6 +51,10 @@ urlpatterns=[
 
     path("budget/",views.budget_page, name="budget"),
 
+    path("expense_analytics/",views.expense_analytics, name="expense_analytics"),
+
+    path("profile_page/",views.profile_page,name="profile_page"),
+
 
 
 

@@ -4,27 +4,30 @@ from pfmApp.models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
-from datetime import date
-from django.db.models import Sum
-from django.utils import timezone
-from decimal import Decimal
 from pfmApp.services.finance_services import *
 import json
-from django.db.models import Case, When, Value, IntegerField
+from django.db.models import Sum
+from datetime import date
+from pfmApp.services.clustering import cluster_user_expenses
 
-# Create your views here.
+
+
+
 
 current_date = date.today()
+
 def dashboard(request):
     summary = get_monthly_financial_summary(request.user)
     upcoming_bills = upcoming_commitment(request.user)
+    profile , created =ProfileDb.objects.get_or_create(user=request.user)
 
 
     context = {
         "summary": summary,
         "chart_data": json.dumps(summary["chart_data"]),
         "current_month_name": now().strftime("%B"),
-        "upcoming_bills":upcoming_bills
+        "upcoming_bills":upcoming_bills,
+        "profile":profile,
 
     }
 
@@ -34,6 +37,46 @@ def dashboard(request):
 def home(request):
 
     return render(request, "home.html")
+
+
+
+
+
+@login_required
+def expense_analytics(request):
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
+
+    month = int(request.GET.get('month', current_date.month))
+    year = int(request.GET.get('year', current_date.year))
+    period = date(year, month, 1)
+
+    cluster_user_expenses(user=request.user, period=period)
+
+    expense_categories = (
+        ExpenseDb.objects
+        .filter(user=request.user, sub_category__period=period)
+        .values('sub_category__display_name')
+        .annotate(total=Sum('amount'))
+        .order_by('-total')
+    )
+
+    available_months = (
+        ExpenseDb.objects
+        .filter(user=request.user)
+        .dates('date', 'month', order='DESC')
+    )
+
+
+
+    return render(request, 'expense_analytics.html', {
+        'expense_categories': expense_categories,
+        'period': period,
+        'available_months': available_months,
+        'current_period': period,
+        "profile": profile,
+    })
+
+
 
 
 
@@ -52,6 +95,7 @@ def user_registration(request):
     if request.method == "POST":
         username = request.POST.get("username")
         email = request.POST.get("email")
+        phone = request.POST.get("phone")
         password1 = request.POST.get("password1")
         password2 = request.POST.get("password2")
 
@@ -67,7 +111,8 @@ def user_registration(request):
         User.objects.create_user(
             username=username,
             email=email,
-            password=password1
+            password=password1,
+            phone=phone,
         )
 
         messages.success(request, "Account created successfully. Please login.")
@@ -108,7 +153,8 @@ def user_logout(request):
 # ****************************************************************************************************************************************
 @login_required
 def add_income(request):
-    return render(request,"add_income.html",{'today':date.today()})
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
+    return render(request,"add_income.html",{'today':date.today(),"profile":profile})
 
 @login_required
 def save_income(request):
@@ -127,14 +173,16 @@ def save_income(request):
     return redirect('view_income')
 @login_required
 def view_income(request):
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
     income = IncomeDb.objects.filter(user=request.user,date__month = current_date.month,date__year = current_date.year)
 
-    return render(request,"view_income.html",{"income":income})
+    return render(request,"view_income.html",{"income":income,"profile":profile})
 
 
 def edit_income(request,income_id):
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
     income = IncomeDb.objects.get(id=income_id,user=request.user)
-    return render(request,"edit_income.html",{"income":income})
+    return render(request,"edit_income.html",{"income":income,profile:profile})
 
 
 def update_income(request,income_id):
@@ -163,7 +211,8 @@ def delete_income(request,income_id):
 
 @login_required
 def add_expense(request):
-    return render(request,"add_expense.html",{'today':date.today()})
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
+    return render(request,"add_expense.html",{'today':date.today(),"profile":profile})
 
 @login_required
 def save_expense(request):
@@ -184,14 +233,15 @@ def save_expense(request):
 
 @login_required
 def view_expense(request):
-
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
     expense = ExpenseDb.objects.filter(user=request.user,date__month = current_date.month,date__year = current_date.year)
-    return render(request,"view_expense.html",{"expense":expense})
+    return render(request,"view_expense.html",{"expense":expense,"profile":profile})
 
 def edit_expense(request,expense_id):
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
 
     expense = ExpenseDb.objects.get(user=request.user,id=expense_id)
-    return render(request,"edit_expense.html",{"expense":expense})
+    return render(request,"edit_expense.html",{"expense":expense,"profile":profile})
 
 def update_expense(request,expense_id):
 
@@ -217,7 +267,8 @@ def delete_expense(request,expense_id):
 #***************************************************************************************************************************************************************************
 
 def add_commitment(request):
-    return render(request,"add_commitment.html")
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
+    return render(request,"add_commitment.html",{"profile":profile})
 
 def save_commitment(request):
 
@@ -235,6 +286,7 @@ def save_commitment(request):
 
 
 def view_commitment(request):
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
     commitments = CommitmentDb.objects.filter(user=request.user)
 
 
@@ -250,11 +302,12 @@ def view_commitment(request):
 
 
 
-    return render(request, "view_commitments.html", {"commitments": commitments})
+    return render(request, "view_commitments.html", {"commitments": commitments, "profile":profile})
 
 
 
 def mark_commitment_paid(request,commitment_id):
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
     commitment = get_object_or_404(CommitmentDb,id=commitment_id,user=request.user)
     success = commitment.mark_as_paid()
 
@@ -265,12 +318,13 @@ def mark_commitment_paid(request,commitment_id):
 
 
 
-    return redirect("view_commitment")
+    return redirect("view_commitment",{"profile":profile})
 
 def edit_commitment(request,commitment_id):
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
     commitment =get_object_or_404(CommitmentDb,id=commitment_id,user=request.user)
 
-    return render(request,"edit_commitment.html",{"commitment":commitment})
+    return render(request,"edit_commitment.html",{"commitment":commitment,"profile":profile})
 
 def update_commitment(request,commitment_id):
     if request.method == "POST":
@@ -301,8 +355,9 @@ def delete_commitment(request, commitment_id):
 #*********************************************************************************************************************************************************
 
 def add_savings(request):
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
 
-    return render(request,"add_savings.html")
+    return render(request,"add_savings.html",{"profile":profile})
 
 def save_savings(request):
 
@@ -318,14 +373,16 @@ def save_savings(request):
     return redirect("add_savings")
 
 def view_savings(request):
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
 
     savings = SavingsDb.objects.filter(user=request.user,date__month = current_date.month,date__year = current_date.year)
-    return render(request,"view_savings.html",{"savings":savings})
+    return render(request,"view_savings.html",{"savings":savings,"profile":profile})
 
 def edit_savings(request, saving_id):
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
 
     savings = SavingsDb.objects.get(user = request.user,id = saving_id)
-    return render(request, "edit_savings.html", {"savings":savings})
+    return render(request, "edit_savings.html", {"savings":savings,"profile":profile})
 
 def update_savings(request, saving_id):
     if request.method == "POST":
@@ -346,8 +403,9 @@ def delete_savings(request, saving_id):
     return redirect("view_savings")
 
 def withdraw_savings_page(request):
+    profile, created = ProfileDb.objects.get_or_create(user=request.user)
 
-    return render(request,"withdraw_savings.html")
+    return render(request,"withdraw_savings.html",{"profile":profile})
 
 
 def save_withdrawal(request):
@@ -383,6 +441,28 @@ def budget_page(request):
 
     return render(request,"budget.html")
 
+
+
+def profile_page(request):
+
+
+    profile,created = ProfileDb.objects.get_or_create(user = request.user)
+
+    if request.method == 'POST':
+        phone = request.POST.get("phone")
+        img = request.FILES.get("image")
+
+        profile.phone = phone
+        if img :
+            profile.profile_photo = img
+
+        profile.save()
+
+        return redirect("profile_page")
+
+
+
+    return render(request,"profile.html",{"profile":profile})
 
 
 

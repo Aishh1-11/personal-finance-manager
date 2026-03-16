@@ -1,10 +1,76 @@
+{% extends 'dashboard.html' %}
+{% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Analytics</title>
 </head>
 <body>
-$END$
+
+<h2 class="text-success">Expense Categories — {{ period|date:"F Y" }}</h2>
+
+<form method="GET"  >
+    <select class="bg-dark text-white border rounded p-2" name="month" onchange="this.form.submit()">
+        {% for m in available_months %}
+        <option value="{{ m.month }}"
+            {% if m.month == current_period.month and m.year == current_period.year %}selected{% endif %}>
+            {{ m|date:"F Y" }}
+        </option>
+        {% endfor %}
+    </select>
+    <input type="hidden" name="year" value="{{ current_period.year }}">
+</form>
+
+
+
+
+
+
+
+<div class="row mt-3">
+
+
+
+<div class="col-lg-6 row">
+            {% for item in expense_categories %}
+
+             <div class="col-lg-4 col-md-4 col-6 mb-4">
+                <div class="card text-white  h-100">
+                  <div class="card-body">
+
+                    <span class="fw-semibold d-block text-success mb-1">{{ item.sub_category__display_name }}</span>
+                    <h3 class="card-title mb-2">₹{{ item.total }}</h3>
+
+
+                  </div>
+                </div>
+             </div>
+
+
+        {% endfor %}
+</div>
+
+      <!-- Expense Distribution -->
+              <div class="col-lg-4 col-md-12 mb-4 ms-5">
+
+                    <h5 class="card-title text-primary">Expense Distribution</h5>
+                    <canvas id="expenseChart"></canvas>
+
+                </div>
+              </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
 </body>
 </html>
+{% endblock %}

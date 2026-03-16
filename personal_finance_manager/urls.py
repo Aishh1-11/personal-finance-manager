@@ -20,11 +20,12 @@ from django.urls import path,include
 import pfmApp.urls
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns,static
 from  personal_finance_manager import settings
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("pfmApp/", include(pfmApp.urls)),
 
 ]
 urlpatterns += staticfiles_urlpatterns()
-urlpatterns += static(settings.MEDIA_URL,docuument_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 

@@ -285,6 +285,4 @@ def upcoming_commitment(user):
 
 
 
-# when the commitments added to the expnse it should not be editable or deletable, and the commiments details are editable
-
 
