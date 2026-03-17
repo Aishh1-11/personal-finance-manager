@@ -35,7 +35,7 @@ STANDARD_CATEGORIES = [
     "Kids & Family",
     "Pets",
     "Loans & EMI",
-    "Others"
+    "Others",
 ]
 
 CATEGORY_DESCRIPTIONS = {
@@ -55,37 +55,32 @@ CATEGORY_DESCRIPTIONS = {
     "Electronics & Gadgets":     "phone laptop computer charger earphone gadget electronic device headphone tablet keyboard mouse",
     "Healthcare & Medical":      "medicine doctor hospital clinic pharmacy medical health consultation lab test scan xray",
     "Insurance":                 "insurance policy premium life health vehicle term cover lic",
-    "Mobile & Internet":         "mobile recharge internet data plan sim airtel jio bsnl vi wifi broadband net connection topup prepaid postpaid network 4g 5g operator",
+    "Mobile & Internet":         "mobile recharge internet data plan sim airtel jio bsnl wifi broadband net connection topup prepaid postpaid network 4g 5g operator",
     "Household & Maintenance":   "household repair maintenance furniture cleaning utensils home kitchen appliance plumber electrician",
     "Gifts & Donations":         "gift donation charity temple church mosque festival present birthday anniversary offering pooja",
     "Investments & Savings":     "mutual fund stocks fd fixed deposit gold investment saving sip zerodha groww share market",
     "Kids & Family":             "school fees toys baby products children kids family diapers uniform stationery tuition",
     "Pets":                      "vet veterinary pet food dog cat grooming collar leash petshop kennel",
     "Loans & EMI":               "loan emi equated monthly installment home bike car personal repayment bank finance bnpl",
-    "Others": "miscellaneous random sundry other general unclassified misc",
+    "Others":                    "miscellaneous random sundry other general unclassified misc",
 }
 
-
-
-
-# ─── merchant database — known brands mapped directly ──────────────────────────
+# ─── merchant database ─────────────────────────────────────────────────────────
 
 MERCHANT_MAP = {
     # fuel
-
     'hpcl':             'Fuel & Petroleum',
     'indian oil':       'Fuel & Petroleum',
     'iocl':             'Fuel & Petroleum',
     'bpcl':             'Fuel & Petroleum',
-
-
     'petrol bunk':      'Fuel & Petroleum',
     'fuel station':     'Fuel & Petroleum',
     # streaming
     'netflix':          'Streaming Services',
     'spotify':          'Streaming Services',
     'hotstar':          'Streaming Services',
-
+    'disney+':          'Streaming Services',
+    'disney plus':      'Streaming Services',
     'amazon prime':     'Streaming Services',
     'prime video':      'Streaming Services',
     'zee5':             'Streaming Services',
@@ -95,22 +90,20 @@ MERCHANT_MAP = {
     'jio':              'Mobile & Internet',
     'airtel':           'Mobile & Internet',
     'bsnl':             'Mobile & Internet',
-
     'vodafone':         'Mobile & Internet',
     'hathway':          'Mobile & Internet',
     # food delivery
-'zomato':       'Dining & Restaurants',
-'swiggy':       'Dining & Restaurants',
+    'zomato':           'Dining & Restaurants',
+    'swiggy':           'Dining & Restaurants',
     # grocery
-'bigbasket':    'Groceries',
-'blinkit':      'Groceries',
-
-'zepto':        'Groceries',
-'instamart':    'Groceries',
-'swiggy instamart': 'Groceries',
+    'bigbasket':        'Groceries',
+    'blinkit':          'Groceries',
+    'dmart':            'Groceries',
+    'zepto':            'Groceries',
+    'instamart':        'Groceries',
+    'swiggy instamart': 'Groceries',
     # transport
     'uber':             'Travel & Transport',
-
     'rapido':           'Travel & Transport',
     'irctc':            'Travel & Transport',
     'redbus':           'Travel & Transport',
@@ -127,20 +120,18 @@ MERCHANT_MAP = {
     'coursera':         'Education & Courses',
     'unacademy':        'Education & Courses',
     'skillshare':       'Education & Courses',
-'physicswallah': 'Education & Courses',
+    'physicswallah':    'Education & Courses',
     # investment
     'zerodha':          'Investments & Savings',
     'groww':            'Investments & Savings',
     'upstox':           'Investments & Savings',
-
-
-
-'mobile recharge':  'Mobile & Internet',
-'phone recharge':   'Mobile & Internet',
-
-'ev recharge':      'Fuel & Petroleum',
-'electric charge':  'Fuel & Petroleum',
-'ev charging':      'Fuel & Petroleum',
+    # recharge
+    'mobile recharge':  'Mobile & Internet',
+    'phone recharge':   'Mobile & Internet',
+    # ev
+    'ev recharge':      'Fuel & Petroleum',
+    'electric charge':  'Fuel & Petroleum',
+    'ev charging':      'Fuel & Petroleum',
 }
 
 # embed category descriptions once at startup
@@ -148,26 +139,34 @@ category_texts = [CATEGORY_DESCRIPTIONS[cat] for cat in STANDARD_CATEGORIES]
 category_embeddings = embedder.encode(category_texts, show_progress_bar=False)
 category_embeddings = normalize(category_embeddings)
 
+# protected words — built from merchant map only
+# no place names needed since spell correction only runs during naming
 MERCHANT_WORDS = set()
 for merchant_key in MERCHANT_MAP.keys():
     for word in merchant_key.lower().split():
         MERCHANT_WORDS.add(word)
 
-# also add common brand names that aren't in merchant map
-PROTECTED_WORDS = MERCHANT_WORDS | {
+PROTECTED_WORDS = MERCHANT_WORDS
 
-    'manali', 'kerala', 'goa', 'ooty', 'shimla', 'munnar',
-
-
-}
 
 # ─── helper functions ──────────────────────────────────────────────────────────
 
-def correct_spelling(title):
-    words = title.lower().split()
+def build_expense_text(expense):
+    """title + note for embedding — no spell correction needed here"""
+    parts = [expense.expense_title]
+    if expense.note:
+        parts.append(expense.note)
+    return ' '.join(parts)
+
+
+def correct_spelling(text):
+    """
+    Only used for category matching — not for clustering.
+    Protects merchant names from being corrected.
+    """
+    words = text.lower().split()
     corrected = []
     for word in words:
-        # skip correction for merchant names and protected words
         if word in PROTECTED_WORDS:
             corrected.append(word)
         else:
@@ -176,37 +175,27 @@ def correct_spelling(title):
     return ' '.join(corrected)
 
 
-def build_expense_text(expense):
-    """
-    Combines title + note + category hint for richer embedding.
-    More context = better clustering separation.
-    """
-    parts = [expense.expense_title]
-    if expense.note:
-        parts.append(expense.note)
-    return ' '.join(parts)
-
 def check_merchant(titles_in_cluster, notes=None):
+    """Stage 1 — exact word match against merchant database"""
     combined = ' '.join(titles_in_cluster).lower()
     if notes:
         combined += ' ' + ' '.join(n for n in notes if n).lower()
 
-    # split into words for exact matching
     combined_words = combined.split()
 
     for merchant, category in MERCHANT_MAP.items():
         merchant_words = merchant.strip().split()
         if len(merchant_words) == 1:
-            # single word — exact word match only
             if merchant.strip() in combined_words:
                 return category
         else:
-            # multi word — substring match is fine
             if merchant in combined:
                 return category
     return None
 
+
 def generate_custom_name(titles_in_cluster):
+    """Stage 4 — extract best phrase from titles when no standard category fits"""
     stop = {
         'my', 'some', 'the', 'a', 'an', 'for', 'and', 'or',
         'at', 'to', 'in', 'of', 'from', 'by', 'with', 'on',
@@ -229,7 +218,7 @@ def generate_custom_name(titles_in_cluster):
         return titles_in_cluster[0].title()
 
     candidate_list = list(candidates)
-    combined = ', '.join(titles_in_cluster)  # ← defined here
+    combined = ', '.join(titles_in_cluster)
 
     candidate_embeddings = embedder.encode(candidate_list, show_progress_bar=False)
     candidate_embeddings = normalize(candidate_embeddings)
@@ -244,8 +233,14 @@ def generate_custom_name(titles_in_cluster):
 
 
 def generate_category_name(titles_in_cluster, expense_contexts=None):
+    """
+    4-stage fallback chain:
+    1. Merchant database
+    2. Note merchant check
+    3. Embedding similarity (with spell correction for better matching)
+    4. Custom name from titles
+    """
     notes = []
-
     if expense_contexts:
         notes = [ctx['note'] for ctx in expense_contexts if ctx['note']]
 
@@ -256,8 +251,8 @@ def generate_category_name(titles_in_cluster, expense_contexts=None):
 
     # stage 2 — note merchant check
     if notes:
-        for note in notes:
-            note_words = note.lower().split()
+        note_words_list = [note.lower().split() for note in notes]
+        for note, note_words in zip(notes, note_words_list):
             for merchant, category in MERCHANT_MAP.items():
                 merchant_words = merchant.strip().split()
                 if len(merchant_words) == 1:
@@ -268,10 +263,12 @@ def generate_category_name(titles_in_cluster, expense_contexts=None):
                         return category
 
     # stage 3 — embedding similarity
-    combined_parts = titles_in_cluster[:]
+    # spell correct here for better matching — not for display
+    corrected_titles = [correct_spelling(t) for t in titles_in_cluster]
+    combined_parts = corrected_titles[:]
     if notes:
         combined_parts.extend(notes)
-    combined = ' '.join(combined_parts)  # ← defined here, before use
+    combined = ' '.join(combined_parts)
 
     combined_embedding = embedder.encode([combined], show_progress_bar=False)
     combined_embedding = normalize(combined_embedding)
@@ -283,11 +280,12 @@ def generate_category_name(titles_in_cluster, expense_contexts=None):
     if best_score > 0.2:
         return STANDARD_CATEGORIES[best_idx]
 
-    # stage 4 — custom name
+    # stage 4 — custom name using original titles for display
     return generate_custom_name(titles_in_cluster)
 
 
 # ─── main clustering function ──────────────────────────────────────────────────
+
 def cluster_user_expenses(user, period=None):
     period = period or date.today().replace(day=1)
 
@@ -302,6 +300,8 @@ def cluster_user_expenses(user, period=None):
     if len(expenses) < 2:
         return
 
+    # past months — cluster once and cache
+    # current month — always recluster
     if period < date.today().replace(day=1):
         already_clustered = ExpenseSubCategory.objects.filter(
             user=user, period=period
@@ -310,10 +310,11 @@ def cluster_user_expenses(user, period=None):
             return
 
     titles = [e.expense_title for e in expenses]
-    texts_for_embedding = [build_expense_text(e) for e in expenses]
-    cleaned_texts = [correct_spelling(t) for t in texts_for_embedding]
 
-    embeddings = embedder.encode(cleaned_texts, show_progress_bar=False)
+    # no spell correction here — embedder handles typos well enough for grouping
+    texts_for_embedding = [build_expense_text(e) for e in expenses]
+
+    embeddings = embedder.encode(texts_for_embedding, show_progress_bar=False)
     embeddings = normalize(embeddings)
 
     clustering = DBSCAN(eps=0.45, min_samples=1, metric='cosine').fit(embeddings)
