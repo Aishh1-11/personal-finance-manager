@@ -35,6 +35,7 @@ STANDARD_CATEGORIES = [
     "Kids & Family",
     "Pets",
     "Loans & EMI",
+    "Others"
 ]
 
 CATEGORY_DESCRIPTIONS = {
@@ -61,6 +62,7 @@ CATEGORY_DESCRIPTIONS = {
     "Kids & Family":             "school fees toys baby products children kids family diapers uniform stationery tuition",
     "Pets":                      "vet veterinary pet food dog cat grooming collar leash petshop kennel",
     "Loans & EMI":               "loan emi equated monthly installment home bike car personal repayment bank finance bnpl",
+    "Others": "miscellaneous random sundry other general unclassified misc",
 }
 
 
@@ -70,20 +72,20 @@ CATEGORY_DESCRIPTIONS = {
 
 MERCHANT_MAP = {
     # fuel
-    'hp':               'Fuel & Petroleum',
+
     'hpcl':             'Fuel & Petroleum',
     'indian oil':       'Fuel & Petroleum',
     'iocl':             'Fuel & Petroleum',
     'bpcl':             'Fuel & Petroleum',
-    'shell':            'Fuel & Petroleum',
-    'essar':            'Fuel & Petroleum',
+
+
     'petrol bunk':      'Fuel & Petroleum',
     'fuel station':     'Fuel & Petroleum',
     # streaming
     'netflix':          'Streaming Services',
     'spotify':          'Streaming Services',
     'hotstar':          'Streaming Services',
-    'disney':           'Streaming Services',
+
     'amazon prime':     'Streaming Services',
     'prime video':      'Streaming Services',
     'zee5':             'Streaming Services',
@@ -93,9 +95,8 @@ MERCHANT_MAP = {
     'jio':              'Mobile & Internet',
     'airtel':           'Mobile & Internet',
     'bsnl':             'Mobile & Internet',
-    'vi ':              'Mobile & Internet',
+
     'vodafone':         'Mobile & Internet',
-    'act ':             'Mobile & Internet',
     'hathway':          'Mobile & Internet',
     # food delivery
 'zomato':       'Dining & Restaurants',
@@ -103,13 +104,13 @@ MERCHANT_MAP = {
     # grocery
 'bigbasket':    'Groceries',
 'blinkit':      'Groceries',
-'dmart':        'Groceries',
+
 'zepto':        'Groceries',
 'instamart':    'Groceries',
 'swiggy instamart': 'Groceries',
     # transport
     'uber':             'Travel & Transport',
-    'ola':              'Travel & Transport',
+
     'rapido':           'Travel & Transport',
     'irctc':            'Travel & Transport',
     'redbus':           'Travel & Transport',
@@ -131,9 +132,9 @@ MERCHANT_MAP = {
     'zerodha':          'Investments & Savings',
     'groww':            'Investments & Savings',
     'upstox':           'Investments & Savings',
-    'coin':             'Investments & Savings',
 
-'recharge':         'Mobile & Internet',
+
+
 'mobile recharge':  'Mobile & Internet',
 'phone recharge':   'Mobile & Internet',
 
@@ -147,12 +148,31 @@ category_texts = [CATEGORY_DESCRIPTIONS[cat] for cat in STANDARD_CATEGORIES]
 category_embeddings = embedder.encode(category_texts, show_progress_bar=False)
 category_embeddings = normalize(category_embeddings)
 
+MERCHANT_WORDS = set()
+for merchant_key in MERCHANT_MAP.keys():
+    for word in merchant_key.lower().split():
+        MERCHANT_WORDS.add(word)
+
+# also add common brand names that aren't in merchant map
+PROTECTED_WORDS = MERCHANT_WORDS | {
+
+    'manali', 'kerala', 'goa', 'ooty', 'shimla', 'munnar',
+
+
+}
 
 # ─── helper functions ──────────────────────────────────────────────────────────
 
 def correct_spelling(title):
     words = title.lower().split()
-    corrected = [spell.correction(w) or w for w in words]
+    corrected = []
+    for word in words:
+        # skip correction for merchant names and protected words
+        if word in PROTECTED_WORDS:
+            corrected.append(word)
+        else:
+            fixed = spell.correction(word) or word
+            corrected.append(fixed)
     return ' '.join(corrected)
 
 
@@ -167,22 +187,24 @@ def build_expense_text(expense):
     return ' '.join(parts)
 
 def check_merchant(titles_in_cluster, notes=None):
-    """
-    Stage 1 — checks titles and notes against known merchant database.
-    Most reliable, zero ambiguity for known brands.
-    """
     combined = ' '.join(titles_in_cluster).lower()
-
-    # also check notes if available
     if notes:
         combined += ' ' + ' '.join(n for n in notes if n).lower()
 
+    # split into words for exact matching
+    combined_words = combined.split()
+
     for merchant, category in MERCHANT_MAP.items():
-        if merchant in combined:
-
-            return category
+        merchant_words = merchant.strip().split()
+        if len(merchant_words) == 1:
+            # single word — exact word match only
+            if merchant.strip() in combined_words:
+                return category
+        else:
+            # multi word — substring match is fine
+            if merchant in combined:
+                return category
     return None
-
 
 def generate_custom_name(titles_in_cluster):
     stop = {
@@ -235,9 +257,15 @@ def generate_category_name(titles_in_cluster, expense_contexts=None):
     # stage 2 — note merchant check
     if notes:
         for note in notes:
+            note_words = note.lower().split()
             for merchant, category in MERCHANT_MAP.items():
-                if merchant in note.lower():
-                    return category
+                merchant_words = merchant.strip().split()
+                if len(merchant_words) == 1:
+                    if merchant.strip() in note_words:
+                        return category
+                else:
+                    if merchant in note.lower():
+                        return category
 
     # stage 3 — embedding similarity
     combined_parts = titles_in_cluster[:]
@@ -260,7 +288,6 @@ def generate_category_name(titles_in_cluster, expense_contexts=None):
 
 
 # ─── main clustering function ──────────────────────────────────────────────────
-
 def cluster_user_expenses(user, period=None):
     period = period or date.today().replace(day=1)
 
@@ -275,31 +302,23 @@ def cluster_user_expenses(user, period=None):
     if len(expenses) < 2:
         return
 
-        # past months — only cluster once, never again
-        # current month — always recluster (new expenses may have been added)
-    if period < date.today():
+    if period < date.today().replace(day=1):
         already_clustered = ExpenseSubCategory.objects.filter(
             user=user, period=period
         ).exists()
         if already_clustered:
             return
 
-    print("Re-clustering...")
-
     titles = [e.expense_title for e in expenses]
-
-    # build rich text for embedding — title + note + category hint
     texts_for_embedding = [build_expense_text(e) for e in expenses]
     cleaned_texts = [correct_spelling(t) for t in texts_for_embedding]
 
-    # embed and cluster
     embeddings = embedder.encode(cleaned_texts, show_progress_bar=False)
     embeddings = normalize(embeddings)
 
     clustering = DBSCAN(eps=0.45, min_samples=1, metric='cosine').fit(embeddings)
     labels = clustering.labels_
 
-    # group titles and contexts by cluster
     cluster_data = {}
     for i, label in enumerate(labels):
         if label == -1:
@@ -312,7 +331,6 @@ def cluster_user_expenses(user, period=None):
             'category': expenses[i].category,
         })
 
-    # generate name for each cluster using fallback chain
     cluster_names = {}
     for cluster_id, data in cluster_data.items():
         cluster_names[cluster_id] = generate_category_name(
@@ -320,8 +338,6 @@ def cluster_user_expenses(user, period=None):
             expense_contexts=data['contexts']
         )
 
-
-    # save to db
     ExpenseSubCategory.objects.filter(user=user, period=period).delete()
 
     for i, expense in enumerate(expenses):
