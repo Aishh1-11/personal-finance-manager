@@ -318,7 +318,7 @@ def mark_commitment_paid(request,commitment_id):
 
 
 
-    return redirect("view_commitment",{"profile":profile})
+    return redirect("view_commitment")
 
 def edit_commitment(request,commitment_id):
     profile, created = ProfileDb.objects.get_or_create(user=request.user)
